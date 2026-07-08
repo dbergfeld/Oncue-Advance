@@ -1,0 +1,53 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply border-surface-border;
+  }
+  body {
+    @apply bg-surface text-neutral-200;
+  }
+  ::selection {
+    @apply bg-accent/30 text-neutral-50;
+  }
+}
+
+@layer components {
+  .oc-label {
+    @apply block text-[11px] font-medium uppercase tracking-wide text-neutral-500 mb-1.5;
+  }
+
+  .oc-input {
+    @apply w-full rounded-md border border-surface-border bg-surface-raised px-3 py-2 text-sm text-neutral-200
+      placeholder:text-neutral-600 focus:border-accent/60 focus:outline-none focus:ring-1 focus:ring-accent/40
+      transition-colors;
+  }
+
+  .oc-textarea {
+    @apply oc-input resize-y min-h-[72px];
+  }
+
+  .oc-select {
+    @apply oc-input pr-8 appearance-none bg-no-repeat;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%23737373'%3E%3Cpath fill-rule='evenodd' d='M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z' clip-rule='evenodd'/%3E%3C/svg%3E");
+    background-position: right 0.5rem center;
+    background-size: 1.1em;
+  }
+
+  .oc-card {
+    @apply rounded-lg border border-surface-border bg-surface-panel;
+  }
+
+  .oc-scrollbar::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  .oc-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .oc-scrollbar::-webkit-scrollbar-thumb {
+    @apply bg-surface-border rounded-full;
+  }
+}
