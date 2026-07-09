@@ -18,14 +18,22 @@ import type {
 
 const BASE = "/api";
 
+// Demo mode ("acting as" picker — see UserContext): trusted x-user-id header.
 let activeUserId: string | null = null;
 export function setActiveUserId(id: string | null) {
   activeUserId = id;
 }
 
+// Supabase mode: verified session, sent as a bearer token instead.
+let accessToken: string | null = null;
+export function setAccessToken(token: string | null) {
+  accessToken = token;
+}
+
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const headers: Record<string, string> = { "Content-Type": "application/json" };
-  if (activeUserId) headers["x-user-id"] = activeUserId;
+  if (accessToken) headers["Authorization"] = `Bearer ${accessToken}`;
+  else if (activeUserId) headers["x-user-id"] = activeUserId;
 
   const res = await fetch(`${BASE}${path}`, { headers, ...init });
   if (!res.ok) {
@@ -46,6 +54,7 @@ const del = (path: string) => request<void>(path, { method: "DELETE" });
 export const api = {
   health: () => request<{ status: string; aiConfigured: boolean }>("/health"),
   getUsers: () => request<User[]>("/users"),
+  getMe: () => request<User>("/me"),
   getTours: () => request<(Tour & { shows: ShowSummary[] })[]>("/tours"),
 
   getShows: () => request<ShowSummary[]>("/shows"),

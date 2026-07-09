@@ -35,6 +35,7 @@ export interface User {
   email: string;
   name: string;
   role: string;
+  isAdmin: boolean;
 }
 
 export interface Tour {

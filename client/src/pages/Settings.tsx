@@ -5,9 +5,9 @@ import { PageHeader } from "../components/ui/PageHeader";
 import { Card, CardHeader } from "../components/ui/Card";
 import { StatusDot } from "../components/ui/StatusBadge";
 import { api } from "../api/client";
+import { isSupabaseConfigured } from "../lib/supabaseClient";
 
 const DEFERRED = [
-  { name: "Supabase Auth", note: "Real login/session — currently a dev-mode \"acting as\" picker in the header (see UserContext)." },
   { name: "File Uploads", note: "Attach real venue packets, plots, and photos to Documents/Requirements/Issues." },
   { name: "Rules Engine (admin UI)", note: "Configurable dependency rules (e.g. rigging approval blocks LED approval) with an editable admin interface." },
   { name: "Node-Based Signal/Routing Graph", note: "SignalLine-equivalent routing view — not modeled this pass; Requirement Matrix covers signal readiness at a checklist level." },
@@ -50,21 +50,35 @@ export function Settings() {
         </Card>
 
         <Card>
-          <CardHeader title="Acting As" subtitle="No real auth yet — every write is attributed to this user (see README)" />
-          <select
-            className="oc-select"
-            value={activeUser?.id ?? ""}
-            onChange={(e) => {
-              const user = users.find((u) => u.id === e.target.value);
-              if (user) setActiveUser(user);
-            }}
-          >
-            {users.map((u) => (
-              <option key={u.id} value={u.id}>
-                {u.name} — {u.role}
-              </option>
-            ))}
-          </select>
+          <CardHeader
+            title="Acting As"
+            subtitle={
+              isSupabaseConfigured
+                ? "Signed in via Supabase Auth — every write is attributed to this user"
+                : "Demo mode (no Supabase project configured) — every write is attributed to this user"
+            }
+          />
+          {isSupabaseConfigured ? (
+            <p className="text-sm text-neutral-200">
+              {activeUser ? `${activeUser.name} — ${activeUser.role}` : "—"}
+              {activeUser?.isAdmin && <span className="ml-2 text-xs text-accent">Admin</span>}
+            </p>
+          ) : (
+            <select
+              className="oc-select"
+              value={activeUser?.id ?? ""}
+              onChange={(e) => {
+                const user = users.find((u) => u.id === e.target.value);
+                if (user) setActiveUser(user);
+              }}
+            >
+              {users.map((u) => (
+                <option key={u.id} value={u.id}>
+                  {u.name} — {u.role}
+                </option>
+              ))}
+            </select>
+          )}
         </Card>
 
         <Card>

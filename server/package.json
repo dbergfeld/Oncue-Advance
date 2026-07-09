@@ -22,6 +22,7 @@
   "dependencies": {
     "@anthropic-ai/sdk": "^0.110.0",
     "@prisma/client": "^5.22.0",
+    "@supabase/supabase-js": "^2.110.2",
     "cors": "^2.8.5",
     "dotenv": "^17.4.2",
     "express": "^4.19.2",

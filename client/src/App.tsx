@@ -10,8 +10,18 @@ import { Timeline } from "./pages/Timeline";
 import { Documents } from "./pages/Documents";
 import { Notes } from "./pages/Notes";
 import { Settings } from "./pages/Settings";
+import { SignIn } from "./pages/SignIn";
+import { useUsers } from "./context/UserContext";
+import { isSupabaseConfigured } from "./lib/supabaseClient";
 
 export default function App() {
+  const { loading, session } = useUsers();
+
+  if (isSupabaseConfigured) {
+    if (loading) return null;
+    if (!session) return <SignIn />;
+  }
+
   return (
     <Routes>
       <Route element={<AppShell />}>

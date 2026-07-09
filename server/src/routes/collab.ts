@@ -5,6 +5,14 @@ import type { EntityType } from "@prisma/client";
 
 export const collabRouter = Router();
 
+/** True if actorId is the record's owner, or an admin. Used to gate comment/attachment deletes. */
+async function canManage(actorId: string | null, ownerId: string | null): Promise<boolean> {
+  if (!actorId) return false;
+  if (actorId === ownerId) return true;
+  const actor = await prisma.user.findUnique({ where: { id: actorId }, select: { isAdmin: true } });
+  return actor?.isAdmin ?? false;
+}
+
 // ---------------------------------------------------------------------------
 // Comments — generic, threaded discussion on a Requirement or Issue.
 // ---------------------------------------------------------------------------
@@ -34,6 +42,15 @@ collabRouter.post(
 collabRouter.delete(
   "/comments/:id",
   asyncHandler(async (req, res) => {
+    const comment = await prisma.comment.findUnique({ where: { id: req.params.id }, select: { authorId: true } });
+    if (!comment) {
+      res.status(404).json({ error: "Comment not found." });
+      return;
+    }
+    if (!(await canManage(req.actorId, comment.authorId))) {
+      res.status(403).json({ error: "Only the comment's author or an admin can delete it." });
+      return;
+    }
     await prisma.comment.delete({ where: { id: req.params.id } });
     res.status(204).end();
   })
@@ -77,6 +94,15 @@ collabRouter.post(
 collabRouter.delete(
   "/attachments/:id",
   asyncHandler(async (req, res) => {
+    const attachment = await prisma.attachment.findUnique({ where: { id: req.params.id }, select: { uploadedById: true } });
+    if (!attachment) {
+      res.status(404).json({ error: "Attachment not found." });
+      return;
+    }
+    if (!(await canManage(req.actorId, attachment.uploadedById))) {
+      res.status(403).json({ error: "Only the uploader or an admin can delete this attachment." });
+      return;
+    }
     await prisma.attachment.delete({ where: { id: req.params.id } });
     res.status(204).end();
   })

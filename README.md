@@ -105,6 +105,27 @@ The Dashboard's **Run Risk Analysis** button calls a real Anthropic API request.
 
 Settings → **AI Risk Engine** shows live configuration status.
 
+### Configuring Supabase Auth
+
+Without a Supabase project configured, the app runs in **demo mode**: the header's "acting as" picker (same as Phase 1/2) stands in for sign-in, and the server trusts a `x-user-id` header. This needs zero setup and is what local dev uses by default.
+
+To enable real authentication:
+
+1. Create a Supabase project. Its Postgres connection string can also replace your local `DATABASE_URL` if you want a single source of truth (the schema is plain PostgreSQL — see "Assumptions Made"), or you can keep using local Postgres for data and Supabase only for Auth.
+2. Server — add to `server/.env`:
+   ```
+   SUPABASE_URL=https://<project>.supabase.co
+   SUPABASE_SERVICE_ROLE_KEY=<service role key>
+   ```
+3. Client — copy `client/.env.example` to `client/.env` and set:
+   ```
+   VITE_SUPABASE_URL=https://<project>.supabase.co
+   VITE_SUPABASE_ANON_KEY=<anon public key>
+   ```
+4. Restart both. The header/Settings picker is replaced by a sign-in screen; signing up/in with an email that matches a seeded `User.email` links to that existing record (and its role/`isAdmin`), otherwise a new `User` is auto-provisioned on first sign-in.
+
+Note: for local Supabase projects, disable "Confirm email" (Authentication → Providers → Email) so `signUp` doesn't require inbound email delivery you likely haven't configured.
+
 ## The Relational Core
 
 `server/prisma/schema.prisma` defines 26 models. Every core operational entity carries `id` (UUID), timestamps, `createdBy`/`updatedBy`, and participates in the generic relationship primitives:
@@ -144,12 +165,12 @@ Two layers, intentionally:
 
 ## State Management
 
-- **`UserContext`** — Phase 2 has no real authentication (see Assumptions). This holds the list of `User` records and the currently "active" one, persisted to `localStorage`. Every write from the client carries `x-user-id`; the server's `actorMiddleware` reads it and every route attributes `createdBy`/`updatedBy`/`AuditLog.actorId` to it.
+- **`UserContext`** — dual-mode identity provider (Phase 3). If `SUPABASE_URL`/`SUPABASE_SERVICE_ROLE_KEY` (server) and `VITE_SUPABASE_URL`/`VITE_SUPABASE_ANON_KEY` (client) are set, it wraps real Supabase Auth sessions: sign-in/sign-up (`pages/SignIn.tsx`), `supabase.auth.onAuthStateChange`, and the session's access token sent as `Authorization: Bearer <token>` on every request. If unset, it falls back to the Phase 1/2 demo mode — a dev "acting as" picker (persisted to `localStorage`) that sends the picked user's id as a trusted `x-user-id` header instead. Either way, the server resolves a single `req.actorId` (`server/src/middleware/auth.ts`) and every route attributes `createdBy`/`updatedBy`/`AuditLog.actorId` to it — the write-attribution path doesn't change between modes. Non-GET `/api` requests are rejected with 401 if no actor resolves (`requireAuth`).
 - **`ShowContext`** — loads the show list once, loads the *selected* show's full detail (all requirements/issues/timeline/schedule/documents/notes) on selection, and exposes `refreshSelectedShow()`. Mutations call `api.xxx(...)` then `refreshSelectedShow()` — a manual refetch-after-write model, not optimistic local patching or a cache library (TanStack Query was in the target stack but wasn't installed this pass — see Deferred). Text/textarea fields commit on blur rather than per-keystroke, since every keystroke would otherwise trigger a refetch.
 
 ## Assumptions Made
 
-- **No real authentication.** `UserContext` + the `x-user-id` header is the entire "auth" story — a deliberate, documented stand-in for Supabase Auth. Swapping it for real sessions means replacing where `activeUserId` comes from in `client/src/api/client.ts` and validating `x-user-id` server-side instead of trusting it; the rest of the write path (`createdBy`/`updatedBy`/audit) doesn't change.
+- **Supabase Auth, with a demo fallback.** Real sessions when a Supabase project is configured (see "Configuring Supabase Auth" below); otherwise the Phase 1/2 dev "acting as" picker + trusted `x-user-id` header, so local dev needs zero setup. `User.isAdmin` is the only authorization check today — it gates deleting another user's comment/attachment (`server/src/routes/collab.ts`); `User.role` remains a free-text job title (cosmetic, unrelated to permissions). Broader ownership/permission rules (e.g. on Requirement/Issue deletes) are intentionally not added — those entities don't have a reliable single owner yet.
 - **Types are hand-mirrored, not shared via a package.** `client/src/types/index.ts` mirrors what the API actually returns (Prisma models + each endpoint's `include`), not the raw Prisma schema. A real monorepo tool (Turborepo, npm workspaces types package) would remove this duplication; skipped here to keep the two apps independently buildable without added tooling.
 - **Refetch-after-write, not optimistic updates or websockets.** The spec says "everything updates in real time" — this pass does a manual refetch on every mutation (typically sub-100ms locally), not a websocket/SSE push. Multiple browser tabs won't see each other's edits without a manual refresh.
 - **"Critical" documents/departments are opinionated defaults**, same as Phase 1 (Venue Packet, Rigging Plot, Stage Plot, Power Plot, Labor Sheet are blocking; others are tracked but not blocking) — see `CRITICAL_DOCUMENTS` in `client/src/utils/completion.ts`.
@@ -162,7 +183,6 @@ Explicitly out of scope for this pass — each is a scoped, addable follow-up, n
 
 | Item | Status | Why deferred |
 |---|---|---|
-| Supabase Auth | Dev-mode "acting as" picker stands in (`UserContext`) | Needs a Supabase project; the write-attribution path is already built to swap in |
 | File uploads | `Attachment`/`Document` are metadata-only | Needs an object storage decision (S3/Supabase Storage); UI already has the "Attach"/"Upload" buttons as disabled placeholders |
 | Rules Engine (admin UI) | Not built | A configurable dependency-rule system with its own admin UI is a project-sized feature on its own; the Timeline page does show a soft (non-blocking) warning when a stage's predecessor isn't complete, as a taste of the concept |
 | Node-based Signal/Routing graph | Not modeled | Requirement Matrix covers signal readiness at a checklist level (department-scoped requirements); a `SignalLine`-style graph model would need real design work on what "routing" means without a Phase 1 SDI/fiber-specific model to build from |
