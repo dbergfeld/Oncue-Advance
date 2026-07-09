@@ -1,87 +1,76 @@
 import { useState } from "react";
-import { useTour } from "../context/TourContext";
+import { useShow } from "../context/ShowContext";
+import { useUsers } from "../context/UserContext";
 import { PageHeader } from "../components/ui/PageHeader";
 import { Card } from "../components/ui/Card";
-import { SelectField, TextAreaField, TextField } from "../components/ui/Field";
+import { SelectField, TextAreaField } from "../components/ui/Field";
 import { Icon } from "../components/ui/icons";
-import { makeLocalId } from "../utils/format";
-import type { AdvanceNote, NoteCategory, NoteStatus } from "../types";
+import { api } from "../api/client";
+import type { NoteCategory, NoteStatus } from "../types";
 
-const CATEGORIES: NoteCategory[] = [
-  "General",
-  "Production Concern",
-  "Venue Limitation",
-  "Follow-Up Question",
-  "Internal Crew Note",
+const CATEGORIES: Array<{ value: NoteCategory; label: string }> = [
+  { value: "GENERAL", label: "General" },
+  { value: "PRODUCTION_CONCERN", label: "Production Concern" },
+  { value: "VENUE_LIMITATION", label: "Venue Limitation" },
+  { value: "FOLLOW_UP_QUESTION", label: "Follow-Up Question" },
+  { value: "INTERNAL_CREW_NOTE", label: "Internal Crew Note" },
 ];
 
 const NOTE_STATUS_OPTIONS: Array<{ value: NoteStatus; label: string }> = [
-  { value: "open", label: "Open" },
-  { value: "monitoring", label: "Monitoring" },
-  { value: "resolved", label: "Resolved" },
+  { value: "OPEN", label: "Open" },
+  { value: "MONITORING", label: "Monitoring" },
+  { value: "RESOLVED", label: "Resolved" },
 ];
 
 const NOTE_STATUS_DOT: Record<NoteStatus, string> = {
-  open: "bg-status-missing",
-  monitoring: "bg-status-review",
-  resolved: "bg-status-confirmed",
+  OPEN: "bg-status-missing",
+  MONITORING: "bg-status-review",
+  RESOLVED: "bg-status-confirmed",
 };
 
+const CATEGORY_LABEL = Object.fromEntries(CATEGORIES.map((c) => [c.value, c.label])) as Record<NoteCategory, string>;
+
 export function Notes() {
-  const { selectedStop, updateStop } = useTour();
-  const [draftCategory, setDraftCategory] = useState<NoteCategory>("General");
+  const { selectedShow, refreshSelectedShow } = useShow();
+  const { activeUser } = useUsers();
+  const [draftCategory, setDraftCategory] = useState<NoteCategory>("GENERAL");
   const [draftText, setDraftText] = useState("");
-  const [draftOwner, setDraftOwner] = useState("");
 
-  if (!selectedStop) return <p className="text-sm text-neutral-500">No tour stop selected.</p>;
+  if (!selectedShow) return <p className="text-sm text-neutral-500">No show selected.</p>;
 
-  const stop = selectedStop;
-
-  function setNote<K extends keyof AdvanceNote>(id: string, key: K, value: AdvanceNote[K]) {
-    updateStop(stop.id, (s) => ({ ...s, notes: s.notes.map((n) => (n.id === id ? { ...n, [key]: value } : n)) }));
-  }
-
-  function removeNote(id: string) {
-    updateStop(stop.id, (s) => ({ ...s, notes: s.notes.filter((n) => n.id !== id) }));
-  }
-
-  function addNote() {
-    if (!draftText.trim()) return;
-    const note: AdvanceNote = {
-      id: makeLocalId("note"),
-      category: draftCategory,
-      text: draftText.trim(),
-      owner: draftOwner.trim() || "Unassigned",
-      status: "open",
-      createdAt: new Date().toISOString(),
-    };
-    updateStop(stop.id, (s) => ({ ...s, notes: [note, ...s.notes] }));
+  async function addNote() {
+    if (!draftText.trim() || !selectedShow) return;
+    await api.createNote(selectedShow.id, { body: draftText.trim(), category: draftCategory, noteStatus: "OPEN" });
     setDraftText("");
-    setDraftOwner("");
+    await refreshSelectedShow();
   }
 
-  const sorted = [...stop.notes].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+  async function setNoteStatus(id: string, noteStatus: NoteStatus) {
+    await api.updateNote(id, { noteStatus });
+    await refreshSelectedShow();
+  }
+
+  async function removeNote(id: string) {
+    await api.deleteNote(id);
+    await refreshSelectedShow();
+  }
+
+  const sorted = [...selectedShow.comments].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
 
   return (
     <div>
-      <PageHeader title="Notes" description="General, production, venue, and crew notes for this stop." />
+      <PageHeader title="Notes" description="General, production, venue, and crew notes for this show." />
 
       <Card className="mb-4">
         <div className="grid grid-cols-4 gap-3">
-          <SelectField
-            label="Category"
-            value={draftCategory}
-            onChange={(v) => setDraftCategory(v as NoteCategory)}
-            options={CATEGORIES.map((c) => ({ value: c, label: c }))}
-          />
-          <TextField label="Owner" value={draftOwner} onChange={setDraftOwner} placeholder="Who's tracking this?" />
+          <SelectField label="Category" value={draftCategory} onChange={(v) => setDraftCategory(v as NoteCategory)} options={CATEGORIES} />
+          <div className="col-span-1 flex flex-col justify-end pb-2 text-xs text-neutral-500">
+            Posting as <span className="text-neutral-300">{activeUser?.name ?? "—"}</span>
+          </div>
           <TextAreaField label="Note" value={draftText} onChange={setDraftText} className="col-span-2" rows={1} placeholder="Add a note…" />
         </div>
         <div className="mt-3 flex justify-end">
-          <button
-            onClick={addNote}
-            className="flex items-center gap-1.5 rounded-md bg-accent px-3 py-1.5 text-xs font-medium text-surface hover:bg-accent-dim"
-          >
+          <button onClick={addNote} className="flex items-center gap-1.5 rounded-md bg-accent px-3 py-1.5 text-xs font-medium text-surface hover:bg-accent-dim">
             <Icon name="plus" className="h-3.5 w-3.5" />
             Add Note
           </button>
@@ -96,21 +85,21 @@ export function Notes() {
             <Card key={note.id}>
               <div className="mb-2 flex items-start justify-between gap-2">
                 <span className="rounded border border-surface-border px-2 py-0.5 text-[11px] uppercase tracking-wide text-neutral-400">
-                  {note.category}
+                  {CATEGORY_LABEL[note.category]}
                 </span>
                 <button onClick={() => removeNote(note.id)} className="text-xs text-neutral-600 hover:text-status-missing">
                   Remove
                 </button>
               </div>
-              <p className="text-sm text-neutral-200">{note.text}</p>
+              <p className="text-sm text-neutral-200">{note.body}</p>
               <div className="mt-3 flex items-center justify-between">
-                <span className="text-xs text-neutral-500">{note.owner}</span>
+                <span className="text-xs text-neutral-500">{note.author?.name ?? "Unassigned"}</span>
                 <div className="flex items-center gap-1.5">
-                  <span className={`h-1.5 w-1.5 rounded-full ${NOTE_STATUS_DOT[note.status]}`} />
+                  <span className={`h-1.5 w-1.5 rounded-full ${NOTE_STATUS_DOT[note.noteStatus]}`} />
                   <select
                     className="bg-transparent text-xs text-neutral-400 focus:outline-none"
-                    value={note.status}
-                    onChange={(e) => setNote(note.id, "status", e.target.value as NoteStatus)}
+                    value={note.noteStatus}
+                    onChange={(e) => setNoteStatus(note.id, e.target.value as NoteStatus)}
                   >
                     {NOTE_STATUS_OPTIONS.map((opt) => (
                       <option key={opt.value} value={opt.value} className="bg-surface-panel">

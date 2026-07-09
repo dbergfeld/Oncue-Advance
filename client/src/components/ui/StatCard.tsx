@@ -1,5 +1,5 @@
 import React from "react";
-import type { Status } from "../../types";
+import type { RecordStatus } from "../../types";
 import { StatusDot } from "./StatusBadge";
 
 export function StatCard({
@@ -12,7 +12,7 @@ export function StatCard({
   label: string;
   value: React.ReactNode;
   sublabel?: string;
-  status?: Status;
+  status?: RecordStatus;
   icon?: React.ReactNode;
 }) {
   return (

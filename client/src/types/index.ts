@@ -1,225 +1,317 @@
 /**
- * OnCue: Advance — core data model.
+ * OnCue: Advance — Phase 2 client-side types.
  *
- * This file is intentionally framework-agnostic (no React imports) so it can be
- * lifted into a shared package once the server moves off flat-file JSON storage
- * (Phase 2 / Supabase). The server keeps a duplicate of this file for now.
+ * Mirrors the shape the API actually returns (Prisma models plus the
+ * includes each endpoint attaches), not the raw Prisma schema 1:1. The
+ * canonical source of truth is server/prisma/schema.prisma.
  */
 
-/** Universal confirmation state used for status badges across the app. */
-export type Status = "confirmed" | "needs-review" | "missing" | "not-started";
+export type RecordStatus = "CONFIRMED" | "NEEDS_REVIEW" | "MISSING" | "NOT_STARTED";
 
-export interface Contact {
+export type Department =
+  | "VIDEO"
+  | "LIGHTING"
+  | "AUDIO"
+  | "RIGGING"
+  | "AUTOMATION"
+  | "BACKLINE"
+  | "PRODUCTION"
+  | "MERCH"
+  | "TRANSPORTATION";
+
+export type Priority = "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
+export type RiskLevel = "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
+export type ApprovalStatus = "PENDING" | "APPROVED" | "REJECTED" | "NOT_REQUIRED";
+export type IssueSeverity = "MINOR" | "MODERATE" | "MAJOR" | "CRITICAL";
+export type IssueStatus = "OPEN" | "IN_PROGRESS" | "RESOLVED" | "CLOSED";
+export type TimelineEntryStatus = "NOT_STARTED" | "IN_PROGRESS" | "COMPLETE" | "BLOCKED" | "SKIPPED";
+export type ShowStatus = "PLANNING" | "ADVANCING" | "CONFIRMED" | "IN_PROGRESS" | "COMPLETED" | "CANCELLED";
+export type DocumentStatus = "UPLOADED" | "NOT_UPLOADED" | "NOT_APPLICABLE";
+export type NoteCategory = "GENERAL" | "PRODUCTION_CONCERN" | "VENUE_LIMITATION" | "FOLLOW_UP_QUESTION" | "INTERNAL_CREW_NOTE";
+export type NoteStatus = "OPEN" | "MONITORING" | "RESOLVED";
+
+export interface User {
+  id: string;
+  email: string;
   name: string;
-  role?: string;
-  email?: string;
-  phone?: string;
-}
-
-export interface Venue {
-  name: string;
-  address: string;
-  productionContact: Contact;
-  dockAccess: string;
-  truckParking: string;
-  busParking: string;
-  stageDimensions: string;
-  fohLocation: string;
-  fohCablePath: string;
-  internetAvailability: string;
-  curfew: string;
-  notes: string;
-}
-
-/** Fixed set of schedule row labels a tour stop advance is built around. */
-export type ScheduleItemLabel =
-  | "Truck Arrival"
-  | "Load In"
-  | "Rigging Call"
-  | "LED Build"
-  | "Camera Build"
-  | "FOH Setup"
-  | "Power Tie-In"
-  | "Signal Check"
-  | "Camera Check"
-  | "Rehearsal"
-  | "Doors"
-  | "Show"
-  | "Load Out";
-
-export interface ScheduleItem {
-  id: string;
-  label: ScheduleItemLabel;
-  time: string;
-  department: string;
-  owner: string;
-  notes: string;
-  status: Status;
-}
-
-export type VideoPackageCategory =
-  | "LED Walls"
-  | "Cameras"
-  | "Media Servers"
-  | "Switcher / Control"
-  | "FOH Video"
-  | "Fiber / Cable Paths"
-  | "Records"
-  | "Comms"
-  | "Monitoring";
-
-export interface VideoPackageItem {
-  id: string;
-  category: VideoPackageCategory;
-  description: string;
-  notes: string;
-  status: Status;
-}
-
-export interface LaborRole {
-  id: string;
   role: string;
-  touringCount: number;
-  localCount: number;
-  callTime: string;
-  notes: string;
-  confirmed: boolean;
-}
-
-export interface LaborPlan {
-  roles: LaborRole[];
-  departmentLeads: string;
-  notes: string;
-  status: Status;
-}
-
-export interface PowerChecklistItem {
-  id: string;
-  label: string;
-  status: Status;
-}
-
-export interface PowerAdvance {
-  shorePowerRequired: string;
-  distroType: string;
-  voltage: string;
-  phase: string;
-  amperage: string;
-  fohPower: string;
-  stageVideoPower: string;
-  ledPower: string;
-  cameraControlPower: string;
-  cableLengths: string;
-  tieInLocation: string;
-  electricianContact: Contact;
-  status: Status;
-  notes: string;
-  checklist: PowerChecklistItem[];
-}
-
-export interface RiggingAdvance {
-  ledWallPoints: string;
-  motorCount: string;
-  motorSize: string;
-  cablePickPoints: string;
-  riggingPlotReceived: boolean;
-  trimHeight: string;
-  weightNotes: string;
-  houseRiggerContact: Contact;
-  restrictions: string;
-  status: Status;
-  notes: string;
-}
-
-/**
- * Signal is modeled as a flat list of routed lines rather than a single blob so
- * a Phase 2 node-based routing graph can consume the same records directly
- * (each SignalLine maps cleanly onto a graph edge: source -> destination).
- */
-export type SignalCategory =
-  | "Camera Feeds"
-  | "Program Feeds"
-  | "IMAG Feeds"
-  | "FOH Sends"
-  | "Stage Returns"
-  | "Fiber Lines"
-  | "SDI Routes";
-
-export interface SignalLine {
-  id: string;
-  category: SignalCategory;
-  source: string;
-  destination: string;
-  notes: string;
-  status: Status;
-}
-
-export interface SignalAdvance {
-  lines: SignalLine[];
-  networkNotes: string;
-  redundancyNotes: string;
-}
-
-export type DocumentStatus = "uploaded" | "not-uploaded" | "not-applicable";
-
-export interface DocumentItem {
-  id: string;
-  name: string;
-  status: DocumentStatus;
-  notes: string;
-}
-
-export type NoteCategory =
-  | "General"
-  | "Production Concern"
-  | "Venue Limitation"
-  | "Follow-Up Question"
-  | "Internal Crew Note";
-
-export type NoteStatus = "open" | "monitoring" | "resolved";
-
-export interface AdvanceNote {
-  id: string;
-  category: NoteCategory;
-  text: string;
-  owner: string;
-  status: NoteStatus;
-  createdAt: string;
-}
-
-export interface TourStop {
-  id: string;
-  tourId: string;
-  date: string;
-  city: string;
-  state: string;
-  venue: Venue;
-  loadIn: string;
-  doors: string;
-  showTime: string;
-  curfew: string;
-  advanceOwner: string;
-  crewCount: number;
-  truckAccessStatus: Status;
-  lastUpdated: string;
-  schedule: ScheduleItem[];
-  videoPackage: VideoPackageItem[];
-  labor: LaborPlan;
-  power: PowerAdvance;
-  rigging: RiggingAdvance;
-  signal: SignalAdvance;
-  documents: DocumentItem[];
-  notes: AdvanceNote[];
 }
 
 export interface Tour {
   id: string;
   name: string;
-  season: string;
   artist: string;
+  season: string;
+  status: RecordStatus;
 }
 
-export interface AppData {
+export interface Contact {
+  id: string;
+  name: string;
+  role: string;
+  email: string;
+  phone: string;
+  notes: string;
+}
+
+export interface Venue {
+  id: string;
+  name: string;
+  address: string;
+  latitude: number | null;
+  longitude: number | null;
+  timezone: string;
+  capacity: number | null;
+  website: string;
+  venueType: string;
+  loadInNotes: string;
+
+  videoNotes: string;
+  lightingNotes: string;
+  audioNotes: string;
+  riggingNotes: string;
+  automationNotes: string;
+  backlineNotes: string;
+  productionNotes: string;
+
+  dockAccess: string;
+  truckCapacity: string;
+  dockHeight: string;
+  hasRamp: boolean;
+  hasForklift: boolean;
+
+  powerServiceType: string;
+  powerVoltage: string;
+  camlocks: string;
+  companySwitch: string;
+  generatorNotes: string;
+
+  riggingPoints: string;
+  weightLimits: string;
+  roofCapacity: string;
+  motorRestrictions: string;
+  houseRiggingNotes: string;
+
+  fohCablePath: string;
+  fohDistance: string;
+  fohMixPosition: string;
+  fohPlatform: string;
+  fiberRoute: string;
+  cameraLocations: string;
+
+  wifiAvailable: boolean;
+  dedicatedNetwork: boolean;
+  fiberAvailable: boolean;
+  internetNotes: string;
+
+  truckParking: string;
+  busParking: string;
+  crewParking: string;
+
+  preferredHotelsNotes: string;
+  airportDistance: string;
+  groundTransportNotes: string;
+
+  windRisk: RiskLevel;
+  heatRisk: RiskLevel;
+  rainRisk: RiskLevel;
+  weatherNotes: string;
+
+  notes: string;
+  contacts: Contact[];
+}
+
+export interface Tag {
+  id: string;
+  label: string;
+  color: string;
+}
+
+export interface EntityTagRef {
+  id: string;
+  tag: Tag;
+}
+
+export interface Requirement {
+  id: string;
+  showId: string;
+  department: Department;
+  name: string;
+  description: string;
+  required: boolean;
+  providedBy: string;
+  confirmed: boolean;
+  status: RecordStatus;
+  ownerId: string | null;
+  owner: User | null;
+  dueDate: string | null;
+  priority: Priority;
+  riskLevel: RiskLevel;
+  notes: string;
+  approvalStatus: ApprovalStatus;
+  tags: EntityTagRef[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Issue {
+  id: string;
+  showId: string | null;
+  show?: { id: string; city: string; state: string; date: string } | null;
+  venueId: string | null;
+  venue?: { id: string; name: string } | null;
+  title: string;
+  description: string;
+  department: Department | null;
+  severity: IssueSeverity;
+  priority: Priority;
+  ownerId: string | null;
+  owner: User | null;
+  status: IssueStatus;
+  resolution: string;
+  lessonsLearned: string;
+  tags: EntityTagRef[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface TimelineStage {
+  id: string;
+  key: string;
+  label: string;
+  order: number;
+}
+
+export interface TimelineEntry {
+  id: string;
+  showId: string;
+  stageId: string;
+  stage: TimelineStage;
+  ownerId: string | null;
+  owner: User | null;
+  status: TimelineEntryStatus;
+  startedAt: string | null;
+  completedAt: string | null;
+  notes: string;
+  dependsOn: Array<{ id: string; stage?: TimelineStage }>;
+}
+
+export interface ScheduleItem {
+  id: string;
+  showId: string;
+  label: string;
+  time: string;
+  department: Department | null;
+  ownerId: string | null;
+  owner: User | null;
+  notes: string;
+  status: RecordStatus;
+  sortOrder: number;
+}
+
+export interface DocumentItem {
+  id: string;
+  showId: string;
+  name: string;
+  status: DocumentStatus;
+  notes: string;
+}
+
+export interface AdvanceNote {
+  id: string;
+  showId: string;
+  authorId: string | null;
+  author: User | null;
+  body: string;
+  category: NoteCategory;
+  noteStatus: NoteStatus;
+  createdAt: string;
+}
+
+export interface EntityComment {
+  id: string;
+  body: string;
+  authorId: string | null;
+  author: User | null;
+  createdAt: string;
+}
+
+export interface EntityAttachment {
+  id: string;
+  fileName: string;
+  mimeType: string;
+  sizeBytes: number | null;
+  createdAt: string;
+}
+
+export interface DepartmentHealth {
+  department: string;
+  percentComplete: number;
+  status: "on-track" | "at-risk" | "blocked" | "not-started";
+  missingCount: number;
+  summary: string;
+}
+
+export interface RiskEngineResult {
+  showId: string;
+  riskScore: number;
+  riskLevel: "low" | "medium" | "high" | "critical";
+  departmentHealth: DepartmentHealth[];
+  missingCriticalItems: string[];
+  openBlockers: string[];
+  recommendations: string[];
+  suggestedQuestions: string[];
+  summary: string;
+  confidence: number;
+  generatedAt: string;
+  model: string;
+}
+
+export interface Show {
+  id: string;
+  tourId: string;
+  tour?: Tour;
+  venueId: string | null;
+  venue: Venue | null;
+  date: string;
+  city: string;
+  state: string;
+  loadIn: string;
+  doors: string;
+  showTime: string;
+  curfew: string;
+  crewCount: number;
+  status: ShowStatus;
+  advanceOwnerId: string | null;
+  advanceOwner: User | null;
+  riskScore: number | null;
+  riskSummary: RiskEngineResult | null;
+  riskAnalyzedAt: string | null;
+  requirements: Requirement[];
+  issues: Issue[];
+  scheduleItems: ScheduleItem[];
+  documents: DocumentItem[];
+  timelineEntries: TimelineEntry[];
+  comments: AdvanceNote[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+/** Lighter shape returned by GET /api/shows (list view — no full nested detail). */
+export interface ShowSummary {
+  id: string;
+  tourId: string;
   tour: Tour;
-  tourStops: TourStop[];
+  venueId: string | null;
+  venue: Venue | null;
+  advanceOwner: User | null;
+  date: string;
+  city: string;
+  state: string;
+  status: ShowStatus;
+  requirements: Requirement[];
+  issues: Issue[];
+  documents: DocumentItem[];
+  riskScore: number | null;
+  updatedAt: string;
 }

@@ -9,14 +9,12 @@ interface NavItem {
 
 const NAV_ITEMS: NavItem[] = [
   { to: "/", label: "Dashboard", icon: "dashboard" },
-  { to: "/tour-stops", label: "Tour Stops", icon: "map" },
+  { to: "/shows", label: "Shows", icon: "map" },
   { to: "/venue", label: "Venue Info", icon: "venue" },
   { to: "/schedule", label: "Schedule", icon: "schedule" },
-  { to: "/video-package", label: "Video Package", icon: "video" },
-  { to: "/labor", label: "Labor", icon: "labor" },
-  { to: "/power", label: "Power", icon: "power" },
-  { to: "/rigging", label: "Rigging", icon: "rigging" },
-  { to: "/signal", label: "Signal", icon: "signal" },
+  { to: "/requirements", label: "Requirements", icon: "video" },
+  { to: "/issues", label: "Issues", icon: "warning" },
+  { to: "/timeline", label: "Timeline", icon: "rigging" },
   { to: "/documents", label: "Documents", icon: "documents" },
   { to: "/notes", label: "Notes", icon: "notes" },
 ];

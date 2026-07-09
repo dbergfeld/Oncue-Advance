@@ -1,8 +1,8 @@
-import type { Status } from "../../types";
+import type { RecordStatus } from "../../types";
 import { STATUS_LABEL } from "../../utils/status";
 import { StatusDot } from "./StatusBadge";
 
-const STATUS_OPTIONS: Status[] = ["confirmed", "needs-review", "missing", "not-started"];
+const STATUS_OPTIONS: RecordStatus[] = ["CONFIRMED", "NEEDS_REVIEW", "MISSING", "NOT_STARTED"];
 
 export function StatusSelect({
   value,
@@ -10,8 +10,8 @@ export function StatusSelect({
   label,
   className = "",
 }: {
-  value: Status;
-  onChange: (value: Status) => void;
+  value: RecordStatus;
+  onChange: (value: RecordStatus) => void;
   label?: string;
   className?: string;
 }) {
@@ -20,7 +20,7 @@ export function StatusSelect({
       <select
         className="oc-select min-w-[8.5rem] py-1.5 pl-6 pr-6 text-xs"
         value={value}
-        onChange={(e) => onChange(e.target.value as Status)}
+        onChange={(e) => onChange(e.target.value as RecordStatus)}
       >
         {STATUS_OPTIONS.map((s) => (
           <option key={s} value={s}>

@@ -1,33 +1,25 @@
-import { useTour } from "../context/TourContext";
+import { useShow } from "../context/ShowContext";
 import { PageHeader } from "../components/ui/PageHeader";
 import { scheduleCompletion } from "../utils/completion";
 import { StatusSelect } from "../components/ui/StatusSelect";
-import type { ScheduleItem } from "../types";
+import { api } from "../api/client";
+import type { RecordStatus, ScheduleItem } from "../types";
 
 export function Schedule() {
-  const { selectedStop, updateStop, savingStopIds } = useTour();
+  const { selectedShow, refreshSelectedShow } = useShow();
 
-  if (!selectedStop) return <p className="text-sm text-neutral-500">No tour stop selected.</p>;
+  if (!selectedShow) return <p className="text-sm text-neutral-500">No show selected.</p>;
 
-  const stop = selectedStop;
-  const completion = scheduleCompletion(stop);
+  const completion = scheduleCompletion(selectedShow.scheduleItems);
 
-  function setItem<K extends keyof ScheduleItem>(id: string, key: K, value: ScheduleItem[K]) {
-    updateStop(stop.id, (s) => ({
-      ...s,
-      schedule: s.schedule.map((item) => (item.id === id ? { ...item, [key]: value } : item)),
-    }));
+  async function updateItem(id: string, data: Partial<Pick<ScheduleItem, "time" | "notes" | "status">>) {
+    await api.updateScheduleItem(id, data);
+    await refreshSelectedShow();
   }
 
   return (
     <div>
-      <PageHeader
-        title="Schedule"
-        description="Day-of-show run of show for load-in through load-out."
-        status={completion.status}
-        percent={completion.percent}
-        saving={savingStopIds.has(stop.id)}
-      />
+      <PageHeader title="Schedule" description="Day-of-show run of show for load-in through load-out." status={completion.status} percent={completion.percent} />
 
       <div className="oc-card overflow-hidden">
         <table className="w-full text-sm">
@@ -42,47 +34,31 @@ export function Schedule() {
             </tr>
           </thead>
           <tbody>
-            {stop.schedule.map((item) => (
+            {selectedShow.scheduleItems.map((item) => (
               <tr key={item.id} className="border-b border-surface-border last:border-0">
                 <td className="px-3 py-2 font-medium text-neutral-200 whitespace-nowrap">{item.label}</td>
                 <td className="px-3 py-2">
                   <input
                     type="text"
                     className="oc-input py-1"
-                    value={item.time}
+                    defaultValue={item.time}
                     placeholder="--:--"
-                    onChange={(e) => setItem(item.id, "time", e.target.value)}
+                    onBlur={(e) => (e.target.value !== item.time ? updateItem(item.id, { time: e.target.value }) : undefined)}
                   />
                 </td>
+                <td className="px-3 py-2 text-xs text-neutral-500">{item.department ?? "—"}</td>
+                <td className="px-3 py-2 text-xs text-neutral-500">{item.owner?.name ?? "—"}</td>
                 <td className="px-3 py-2">
                   <input
                     type="text"
                     className="oc-input py-1"
-                    value={item.department}
-                    placeholder="Dept"
-                    onChange={(e) => setItem(item.id, "department", e.target.value)}
-                  />
-                </td>
-                <td className="px-3 py-2">
-                  <input
-                    type="text"
-                    className="oc-input py-1"
-                    value={item.owner}
-                    placeholder="Owner"
-                    onChange={(e) => setItem(item.id, "owner", e.target.value)}
-                  />
-                </td>
-                <td className="px-3 py-2">
-                  <input
-                    type="text"
-                    className="oc-input py-1"
-                    value={item.notes}
+                    defaultValue={item.notes}
                     placeholder="Notes"
-                    onChange={(e) => setItem(item.id, "notes", e.target.value)}
+                    onBlur={(e) => (e.target.value !== item.notes ? updateItem(item.id, { notes: e.target.value }) : undefined)}
                   />
                 </td>
                 <td className="px-3 py-2">
-                  <StatusSelect value={item.status} onChange={(v) => setItem(item.id, "status", v)} />
+                  <StatusSelect value={item.status} onChange={(v: RecordStatus) => updateItem(item.id, { status: v })} />
                 </td>
               </tr>
             ))}

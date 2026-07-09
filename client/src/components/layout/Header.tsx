@@ -1,47 +1,65 @@
-import { useTour } from "../../context/TourContext";
+import { useShow } from "../../context/ShowContext";
+import { useUsers } from "../../context/UserContext";
 import { formatDate } from "../../utils/format";
-import { Icon } from "../ui/icons";
 
 export function Header() {
-  const { tour, tourStops, selectedStop, selectStop } = useTour();
+  const { shows, selectedShow, selectShow } = useShow();
+  const { users, activeUser, setActiveUser } = useUsers();
 
-  const sortedStops = [...tourStops].sort((a, b) => a.date.localeCompare(b.date));
+  const sortedShows = [...shows].sort((a, b) => a.date.localeCompare(b.date));
 
   return (
     <header className="flex h-14 shrink-0 items-center justify-between border-b border-surface-border bg-surface-panel/60 px-6">
       <div className="flex items-center gap-4">
         <div>
           <p className="text-xs text-neutral-500">
-            {tour ? `${tour.artist} — ${tour.name}` : "Loading tour…"}
+            {selectedShow?.tour ? `${selectedShow.tour.artist} — ${selectedShow.tour.name}` : "Loading tour…"}
           </p>
-          {selectedStop && (
+          {selectedShow && (
             <p className="text-sm font-medium text-neutral-100">
-              {selectedStop.venue.name || "Untitled Venue"}
-              <span className="text-neutral-500"> · {selectedStop.city}, {selectedStop.state}</span>
+              {selectedShow.venue?.name || "Venue TBD"}
+              <span className="text-neutral-500"> · {selectedShow.city}, {selectedShow.state}</span>
             </p>
           )}
         </div>
       </div>
 
-      {selectedStop && (
-        <div className="flex items-center gap-3">
-          <span className="hidden text-xs text-neutral-500 sm:inline">{formatDate(selectedStop.date)}</span>
-          <div className="relative">
+      <div className="flex items-center gap-3">
+        {selectedShow && (
+          <>
+            <span className="hidden text-xs text-neutral-500 sm:inline">{formatDate(selectedShow.date)}</span>
             <select
               className="oc-select w-64 py-1.5 text-sm"
-              value={selectedStop.id}
-              onChange={(e) => selectStop(e.target.value)}
+              value={selectedShow.id}
+              onChange={(e) => selectShow(e.target.value)}
             >
-              {sortedStops.map((stop) => (
-                <option key={stop.id} value={stop.id}>
-                  {formatDate(stop.date)} — {stop.city}, {stop.state}
+              {sortedShows.map((show) => (
+                <option key={show.id} value={show.id}>
+                  {formatDate(show.date)} — {show.city}, {show.state}
                 </option>
               ))}
             </select>
-          </div>
-          <Icon name="map" className="h-4 w-4 text-neutral-600" />
-        </div>
-      )}
+          </>
+        )}
+
+        <div className="h-6 w-px bg-surface-border" />
+
+        <select
+          className="oc-select w-40 py-1.5 text-xs"
+          value={activeUser?.id ?? ""}
+          onChange={(e) => {
+            const user = users.find((u) => u.id === e.target.value);
+            if (user) setActiveUser(user);
+          }}
+          title="Acting as (Phase 1/2 has no real auth — see Settings)"
+        >
+          {users.map((u) => (
+            <option key={u.id} value={u.id}>
+              {u.name}
+            </option>
+          ))}
+        </select>
+      </div>
     </header>
   );
 }

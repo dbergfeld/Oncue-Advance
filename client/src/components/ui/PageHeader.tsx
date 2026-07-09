@@ -1,4 +1,4 @@
-import type { Status } from "../../types";
+import type { RecordStatus } from "../../types";
 import { StatusBadge } from "./StatusBadge";
 import { ProgressBar } from "./ProgressBar";
 
@@ -11,7 +11,7 @@ export function PageHeader({
 }: {
   title: string;
   description?: string;
-  status?: Status;
+  status?: RecordStatus;
   percent?: number;
   saving?: boolean;
 }) {

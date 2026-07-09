@@ -1,11 +1,11 @@
 import { Outlet } from "react-router-dom";
-import { useTour } from "../../context/TourContext";
+import { useShow } from "../../context/ShowContext";
 import { Sidebar } from "./Sidebar";
 import { Header } from "./Header";
 import { AdvanceStatusPanel } from "./AdvanceStatusPanel";
 
 export function AppShell() {
-  const { loading, error } = useTour();
+  const { loading, error } = useShow();
 
   if (loading) {
     return (

@@ -1,29 +1,27 @@
-import { useTour } from "../context/TourContext";
+import { useShow } from "../context/ShowContext";
 import { PageHeader } from "../components/ui/PageHeader";
 import { Card } from "../components/ui/Card";
 import { Icon } from "../components/ui/icons";
 import { documentsCompletion, CRITICAL_DOCUMENTS } from "../utils/completion";
-import type { DocumentItem, DocumentStatus } from "../types";
+import { api } from "../api/client";
+import type { DocumentStatus } from "../types";
 
 const STATUS_OPTIONS: Array<{ value: DocumentStatus; label: string }> = [
-  { value: "not-uploaded", label: "Not Uploaded" },
-  { value: "uploaded", label: "Uploaded" },
-  { value: "not-applicable", label: "Not Applicable" },
+  { value: "NOT_UPLOADED", label: "Not Uploaded" },
+  { value: "UPLOADED", label: "Uploaded" },
+  { value: "NOT_APPLICABLE", label: "Not Applicable" },
 ];
 
 export function Documents() {
-  const { selectedStop, updateStop, savingStopIds } = useTour();
+  const { selectedShow, refreshSelectedShow } = useShow();
 
-  if (!selectedStop) return <p className="text-sm text-neutral-500">No tour stop selected.</p>;
+  if (!selectedShow) return <p className="text-sm text-neutral-500">No show selected.</p>;
 
-  const stop = selectedStop;
-  const completion = documentsCompletion(stop);
+  const completion = documentsCompletion(selectedShow.documents);
 
-  function setDoc<K extends keyof DocumentItem>(id: string, key: K, value: DocumentItem[K]) {
-    updateStop(stop.id, (s) => ({
-      ...s,
-      documents: s.documents.map((d) => (d.id === id ? { ...d, [key]: value } : d)),
-    }));
+  async function updateDoc(id: string, data: { status?: DocumentStatus; notes?: string }) {
+    await api.updateDocument(id, data);
+    await refreshSelectedShow();
   }
 
   return (
@@ -33,7 +31,6 @@ export function Documents() {
         description="Advance document checklist. File upload lands in a later phase — this tracks status only."
         status={completion.status}
         percent={completion.percent}
-        saving={savingStopIds.has(stop.id)}
       />
 
       <Card padded={false} className="overflow-hidden">
@@ -47,7 +44,7 @@ export function Documents() {
             </tr>
           </thead>
           <tbody>
-            {stop.documents.map((doc) => (
+            {selectedShow.documents.map((doc) => (
               <tr key={doc.id} className="border-b border-surface-border last:border-0">
                 <td className="px-4 py-2.5 font-medium text-neutral-200">
                   {doc.name}
@@ -57,7 +54,7 @@ export function Documents() {
                   <select
                     className="oc-select py-1"
                     value={doc.status}
-                    onChange={(e) => setDoc(doc.id, "status", e.target.value as DocumentStatus)}
+                    onChange={(e) => updateDoc(doc.id, { status: e.target.value as DocumentStatus })}
                   >
                     {STATUS_OPTIONS.map((opt) => (
                       <option key={opt.value} value={opt.value}>
@@ -79,9 +76,9 @@ export function Documents() {
                 <td className="px-4 py-2.5">
                   <input
                     className="oc-input py-1"
-                    value={doc.notes}
+                    defaultValue={doc.notes}
                     placeholder="Notes"
-                    onChange={(e) => setDoc(doc.id, "notes", e.target.value)}
+                    onBlur={(e) => (e.target.value !== doc.notes ? updateDoc(doc.id, { notes: e.target.value }) : undefined)}
                   />
                 </td>
               </tr>

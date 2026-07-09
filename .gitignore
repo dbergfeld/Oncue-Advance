@@ -7,6 +7,12 @@ dist-ssr/
 # Server runtime data (regenerated from server/src/data/seed.ts)
 server/data/db.json
 
+# Environment / secrets
+.env
+.env.*
+!.env.example
+!*/.env.example
+
 # Editor/OS
 .DS_Store
 .vscode/*
