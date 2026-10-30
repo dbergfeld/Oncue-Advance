@@ -4,7 +4,7 @@
 
 export const SCHEMA_VERSION = "1.0.0";
 
-export type ModuleId = "led" | "signal" | "rack" | "servers" | "binder";
+export type ModuleId = "led" | "signal" | "rack" | "servers" | "binder" | "show";
 export type WriterId = ModuleId | "shell" | "store" | "mobile";
 export type ShowStatus = "draft" | "issued" | "locked" | "archived";
 export type ShowSource = "blank" | "template" | "example" | "copy";
@@ -13,7 +13,8 @@ export const EVENT_TYPES: EventType[] = ["arena", "amphitheater", "festival", "f
 
 export type IdPrefix =
   | "dev" | "p" | "cab" | "wall" | "ckt" | "sig" | "lnk" | "rg" | "rack" | "srv"
-  | "sec" | "ann" | "chk" | "task" | "pos" | "path" | "seg" | "jack" | "sch" | "con" | "svc" | "cam";
+  | "sec" | "ann" | "chk" | "task" | "pos" | "path" | "seg" | "jack" | "sch" | "con" | "svc" | "cam"
+  | "sl" | "song" | "cue" | "note";
 
 // ---------- devices ----------
 export type DeviceClass =
@@ -145,7 +146,7 @@ export interface Check {
   firstSeen: string; lastSeen: string; rev: number;
 }
 
-export type BinderSectionKey = "front-view" | "rigging" | "video-system" | "led" | "cameras" | "network" | "foh" | "power" | "schedule" | "contacts" | "notes";
+export type BinderSectionKey = "front-view" | "rigging" | "video-system" | "led" | "cameras" | "network" | "foh" | "power" | "schedule" | "contacts" | "notes" | "show-book";
 export interface BinderSection {
   id: string; key: BinderSectionKey; order: number; visible: boolean; required?: boolean;
   blocks: { type: "auto" | "text" | "image" | "table"; ref: string | null; body: string }[];
@@ -153,6 +154,53 @@ export interface BinderSection {
 export interface ScheduleEntry { id: string; key?: string; date: string; time: string; item: string; owner: string; confirmed?: boolean }
 export interface Contact { id: string; name: string; role: string; phone: string; email: string }
 export interface Annotation { id: string; target: string; author: string; body: string; at: string }
+
+
+// ---------- show book (Cues & camera notes tab) ----------
+export type SongTag = "opener" | "ballad" | "uptempo" | "acoustic" | "encore" | "walk-on" | "walk-off" | "interstitial";
+export type CueKind = "camera" | "server" | "record" | "wall" | "lighting-sync" | "safety" | "other";
+export type CueStatus = "hit" | "missed" | "cut";
+export type RunId = "rehearsal-1" | "rehearsal-2" | "show";
+export interface Cue {
+  id: string; order: number; at: string; call: string; kind: CueKind; target?: string;
+  action?: { type: "look" | "record-start" | "record-stop" | "blackout" | "cue-ref"; ref: string };
+  status?: CueStatus | null;
+}
+export interface CameraNote {
+  id: string; cameraId: string; shot: string; lens?: string;
+  move?: "static" | "push" | "pull" | "pan" | "track" | "handheld";
+  priority: "primary" | "cover" | "safety"; timing?: string; warning?: string;
+  authored: { by: string; at: string; during: "build" | "rehearsal" | "show" };
+  /** Operator ⚑ notes wait for the director to accept or edit them. */
+  pending?: boolean;
+  /** Text this note replaced at show time, kept visible for one song. */
+  previous?: string;
+}
+export interface Flag { kind: "pyro" | "strobe" | "confetti" | "crowd" | "quick-change" | "audience-lights" | "custom"; at?: string; note: string }
+export interface Song {
+  id: string; order: number; title: string; durationSec?: number; bpm?: number; key?: string; tag?: SongTag;
+  lookRef?: { serverId: string; lookName: string };
+  wallState?: { wallId: string; note: string }[];
+  cues: Cue[]; cameraNotes: CameraNote[]; directorNote?: string; flags: Flag[];
+  skipped?: boolean; isNew?: boolean;
+}
+export interface SetChange { afterSongId: string; durationSec: number; notes: string; cameraMoves: { cameraId: string; to: string }[] }
+export interface Setlist { id: string; name: string; version: number; source: "manual" | "import" | "copy"; songs: Song[]; setChanges: SetChange[] }
+export interface CameraSlot { cameraId: string; operator: string; position: string; comms: string; active: boolean }
+export interface RunEvent {
+  at: string; run: RunId; songId: string; event: "start" | "end" | "cue" | "note" | "skip" | "hold" | "resume";
+  cueId?: string; status?: CueStatus; by: string; note?: string; during?: "build" | "rehearsal" | "show";
+}
+export interface ShowBook {
+  setlists: Setlist[];
+  activeSetlistId: string | null;
+  cameraRoster: CameraSlot[];
+  runLog: RunEvent[];
+  /** Notes carried from another show whose camera label had no match here (SHW-001 until reassigned). */
+  unbound: (CameraNote & { songTitle: string; cameraLabel: string })[];
+  /** Set by "Unfreeze setlist" while locked; structural edits are allowed while it is set. */
+  unfrozen: { by: string; at: string; reason: string } | null;
+}
 
 // ---------- tasks ----------
 export type Lane = "advance" | "signal" | "crew" | "led" | "servers" | "rack" | "prep";
@@ -241,6 +289,7 @@ export interface Derived {
   inventory: { deviceCount: number; cableCountByType: Record<string, number>; caseCount: number };
   physical?: { byPath: Record<string, { cables: number; byType: Record<string, number>; totalFt: number }> };
   tasks: Record<string, { status: TaskStatus; blockers: { kind: string; label: string; route?: string }[]; dueResolved?: string }>;
+  show?: { songsWithoutPrimary: string[]; camerasWithoutNotes: string[]; cuesByKind: Record<string, number>; measuredDurations: Record<string, number>; totalRunSec: number };
   readiness: { advance: boolean; criteria: { label: string; ok: boolean; blocks: boolean }[] };
   binder: { completeness: Record<string, number>; openBySeverity: Record<Severity, number> };
   computedAt: string;
@@ -274,10 +323,11 @@ export interface ShowRecord {
   binder: { sections: BinderSection[]; annotations: Annotation[]; checks: Check[]; schedule: ScheduleEntry[]; contacts: Contact[] };
   tasks: Task[];
   physical: { positions: Position[]; paths: PhysPath[]; trunks: string[]; stock: Partial<Record<CableType, number[]>> };
+  show: ShowBook;
   derived: Derived;
 }
 
-export interface Revision { rev: number; issuedAt: string; record: ShowRecord; openTasks: Task[] }
+export interface Revision { rev: number; issuedAt: string; record: ShowRecord; openTasks: Task[]; setlist?: Setlist | null }
 
 export type Patch =
   | { op: "add"; path: string; value: unknown }

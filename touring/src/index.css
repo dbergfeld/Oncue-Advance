@@ -38,3 +38,13 @@ h1, h2, h3 { text-wrap: balance; }
 .tbl td { padding: 5px 8px; border-bottom: 1px solid rgb(var(--line) / .6); vertical-align: top; }
 .scroll-x { overflow-x: auto; }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+
+/* Show Book run screens: always the dark palette, for a dark room at the switcher. */
+.stage {
+  --bg: 12 14 14; --raised: 22 26 26; --panel: 30 35 35; --line: 52 60 60;
+  --ink: 236 240 238; --dim: 150 160 157; --accent: 52 196 206;
+  --block: 244 104 92; --warn: 236 176 66; --info: 140 170 234; --ok: 96 204 136;
+  color-scheme: dark; background: rgb(var(--bg)); color: rgb(var(--ink));
+}
+@keyframes noteflash { from { background: rgb(var(--accent) / .35); } to { background: transparent; } }
+.flash { animation: noteflash 10s ease-out 1; }

@@ -1,4 +1,4 @@
-import { SCHEMA_VERSION, type Confirmed, type Derived, type EventRecord, type EventType, type ShowRecord, type ShowSource } from "./types";
+import { SCHEMA_VERSION, type ShowBook, type Confirmed, type Derived, type EventRecord, type EventType, type ShowRecord, type ShowSource } from "./types";
 
 export function unknown<T>(value: T | null = null): Confirmed<T> {
   return { value, state: "unknown" };
@@ -63,6 +63,7 @@ export function blankRecord(showId: string, showCode: string, source: ShowSource
     binder: { sections: [], annotations: [], checks: [], schedule: [], contacts: [] },
     tasks: [],
     physical: { positions: [], paths: [], trunks: [], stock: {} },
+    show: blankShowBook(),
     derived: emptyDerived(),
   };
 }
@@ -88,10 +89,15 @@ export function normalize(r: Partial<ShowRecord> & { showId: string }): ShowReco
     binder: { ...base.binder, ...(r.binder ?? {}) },
     tasks: r.tasks ?? [],
     physical: { ...base.physical, ...(r.physical ?? {}) },
+    show: { ...base.show, ...(r.show ?? {}) },
     derived: { ...emptyDerived(), ...((r.derived as Derived) ?? {}) },
   } as ShowRecord;
   const defaults = { rackId: null, ru: 0, powerW: 0, weightLb: 0, qty: 1, ports: [], inventoryRef: {} };
   out.devices = (out.devices ?? []).map((d) => ({ ...defaults, ...d }));
   out.cables = out.cables ?? [];
   return out;
+}
+
+export function blankShowBook(): ShowBook {
+  return { setlists: [], activeSetlistId: null, cameraRoster: [], runLog: [], unbound: [], unfrozen: null };
 }

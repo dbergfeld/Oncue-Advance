@@ -2,7 +2,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState, u
 import type { ShowAPI, Workspace } from "../store/store";
 import type { Patch, Result, ShowRecord, WriterId } from "../store/types";
 
-export type View = "shows" | "overview" | "advance" | "crew" | "led" | "signal" | "rack" | "servers" | "binder" | "tasks" | "library" | "changelog";
+export type View = "shows" | "overview" | "advance" | "crew" | "led" | "signal" | "rack" | "servers" | "binder" | "showbook" | "tasks" | "library" | "changelog";
 export const VIEWS: { id: View; label: string; needsShow: boolean }[] = [
   { id: "shows", label: "Shows", needsShow: false },
   { id: "overview", label: "Overview", needsShow: true },
@@ -13,6 +13,7 @@ export const VIEWS: { id: View; label: string; needsShow: boolean }[] = [
   { id: "rack", label: "Rack Build", needsShow: true },
   { id: "servers", label: "Media Servers", needsShow: true },
   { id: "binder", label: "Show Binder", needsShow: true },
+  { id: "showbook", label: "Show Book", needsShow: true },
   { id: "tasks", label: "Tasks", needsShow: true },
   { id: "library", label: "Device library", needsShow: false },
   { id: "changelog", label: "Changelog", needsShow: true },

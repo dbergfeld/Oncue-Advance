@@ -118,10 +118,10 @@ export function CheckCard({ c, compact }: { c: Check; compact?: boolean }) {
 }
 
 export function moduleView(m: string): View {
-  return ({ led: "led", signal: "signal", rack: "rack", servers: "servers", binder: "binder", shell: "advance", store: "overview", crew: "crew", advance: "advance" } as Record<string, View>)[m] ?? "overview";
+  return ({ led: "led", signal: "signal", rack: "rack", servers: "servers", binder: "binder", show: "showbook", shell: "advance", store: "overview", crew: "crew", advance: "advance" } as Record<string, View>)[m] ?? "overview";
 }
 export function moduleName(m: string): string {
-  return ({ led: "LED Map & Power", signal: "Signal Flow", rack: "Rack Build", servers: "Media Servers", binder: "Show Binder", shell: "Advance", store: "Store", crew: "Crew", advance: "Advance" } as Record<string, string>)[m] ?? m;
+  return ({ led: "LED Map & Power", signal: "Signal Flow", rack: "Rack Build", servers: "Media Servers", binder: "Show Binder", show: "Show Book", shell: "Advance", store: "Store", crew: "Crew", advance: "Advance" } as Record<string, string>)[m] ?? m;
 }
 
 export function Modal({ title, onClose, children, wide }: { title: string; onClose(): void; children: ReactNode; wide?: boolean }) {

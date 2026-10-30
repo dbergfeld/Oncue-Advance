@@ -10,6 +10,7 @@ import { SignalView } from "./views/Signal";
 import { RackView } from "./views/Rack";
 import { ServersView } from "./views/Servers";
 import { BinderView } from "./views/Binder";
+import { ShowBookView } from "./views/ShowBook";
 import { TasksView } from "./views/Tasks";
 import { LibraryView } from "./views/Library";
 import { ChangelogView } from "./views/Changelog";
@@ -83,6 +84,7 @@ function render(view: string) {
     case "rack": return <RackView />;
     case "servers": return <ServersView />;
     case "binder": return <BinderView />;
+    case "showbook": return <ShowBookView />;
     case "tasks": return <TasksView />;
     case "library": return <LibraryView />;
     case "changelog": return <ChangelogView />;
