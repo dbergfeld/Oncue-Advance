@@ -1,0 +1,1411 @@
+{
+  "showId": "3b9d6c2e-8a41-4f0e-b7d2-5c1e9a0f4d17",
+  "showCode": "TA-2026-001",
+  "tourId": null,
+  "name": "Tasks Arena · Seeded handoff chain",
+  "client": {
+    "artist": "Example Artist",
+    "management": "",
+    "productionCo": ""
+  },
+  "event": {
+    "type": "arena",
+    "dates": [
+      "2026-11-14"
+    ],
+    "venueId": "",
+    "venueName": "Example Arena",
+    "city": "Nashville",
+    "state": "TN",
+    "room": "Main Bowl",
+    "access": {
+      "docks": {
+        "value": null,
+        "state": "unknown"
+      },
+      "pushDistance_ft": {
+        "value": null,
+        "state": "unknown"
+      },
+      "pathNotes": {
+        "value": null,
+        "state": "unknown"
+      },
+      "elevator": {
+        "value": null,
+        "state": "unknown"
+      },
+      "stageDims": {
+        "value": null,
+        "state": "unknown"
+      },
+      "videoWorld": {
+        "value": null,
+        "state": "unknown"
+      },
+      "truckParking": {
+        "value": null,
+        "state": "unknown"
+      },
+      "shorePower": {
+        "value": null,
+        "state": "unknown"
+      },
+      "credentials": {
+        "value": null,
+        "state": "unknown"
+      },
+      "floorLoad_psf": {
+        "value": null,
+        "state": "unknown"
+      },
+      "floorProtection": {
+        "value": null,
+        "state": "unknown"
+      },
+      "lifts": {
+        "value": null,
+        "state": "unknown"
+      }
+    },
+    "power": {
+      "services": {
+        "value": null,
+        "state": "unknown"
+      },
+      "dedicated": {
+        "value": null,
+        "state": "unknown"
+      },
+      "electrician": {
+        "value": null,
+        "state": "unknown"
+      },
+      "generator": {
+        "value": null,
+        "state": "unknown"
+      },
+      "constraints": {
+        "value": null,
+        "state": "unknown"
+      },
+      "groundingNotes": {
+        "value": null,
+        "state": "unknown"
+      },
+      "service": "",
+      "amps": null,
+      "location": ""
+    },
+    "rigging": {
+      "maxTrim_ft": {
+        "value": 40,
+        "state": "confirmed",
+        "by": "venue PM",
+        "at": "2026-10-28T15:00:00Z",
+        "source": "email"
+      },
+      "steelHeight_ft": {
+        "value": null,
+        "state": "unknown"
+      },
+      "points": {
+        "value": null,
+        "state": "unknown"
+      },
+      "pointCapacity_lb": {
+        "value": null,
+        "state": "unknown"
+      },
+      "spacing_ft": {
+        "value": null,
+        "state": "unknown"
+      },
+      "plotRef": {
+        "value": null,
+        "state": "unknown"
+      },
+      "plotFormat": {
+        "value": null,
+        "state": "unknown"
+      },
+      "houseRigger": {
+        "value": null,
+        "state": "unknown"
+      },
+      "motors": {
+        "value": null,
+        "state": "unknown"
+      },
+      "groundSupport": {
+        "value": null,
+        "state": "unknown"
+      },
+      "restrictions": {
+        "value": null,
+        "state": "unknown"
+      }
+    },
+    "foh": {
+      "value": null,
+      "state": "unknown"
+    },
+    "signalPath": {
+      "stageToFOH": {
+        "value": null,
+        "state": "unknown"
+      },
+      "houseFibre": {
+        "value": null,
+        "state": "unknown"
+      },
+      "videoVillage": {
+        "value": null,
+        "state": "unknown"
+      },
+      "houseFeeds": {
+        "value": null,
+        "state": "unknown"
+      }
+    },
+    "cameras": {
+      "positions": {
+        "value": null,
+        "state": "unknown"
+      }
+    },
+    "comms": {
+      "value": null,
+      "state": "unknown"
+    },
+    "labor": {
+      "value": null,
+      "state": "unknown"
+    },
+    "houseVideo": {
+      "value": null,
+      "state": "unknown"
+    }
+  },
+  "vendor": {
+    "company": "Fuse Operations",
+    "orderRef": "000000",
+    "orderSystem": "RentalWorks"
+  },
+  "crew": {
+    "videoDirector": "",
+    "crewChief": "",
+    "eic": "",
+    "ledLead": "",
+    "cameraLead": "",
+    "serverOp": "",
+    "pm": "",
+    "localLabor": ""
+  },
+  "meta": {
+    "status": "draft",
+    "revision": 1,
+    "schemaVersion": "1.0.0",
+    "source": "blank",
+    "createdAt": "2026-10-30T08:00:00Z",
+    "updatedAt": "2026-10-30T08:00:00Z",
+    "updatedBy": "shell",
+    "changelog": [],
+    "rev": 0
+  },
+  "devices": [
+    {
+      "rackId": "rack_v1",
+      "ru": 2,
+      "powerW": 450,
+      "weightLb": 22,
+      "qty": 1,
+      "ports": [
+        {
+          "id": "p_proc1_in1",
+          "name": "HDMI IN 1",
+          "type": "HDMI2.0",
+          "dir": "in"
+        },
+        {
+          "id": "p_proc1_out1",
+          "name": "10G OUT 1",
+          "type": "fiberLED",
+          "dir": "out"
+        }
+      ],
+      "inventoryRef": {
+        "system": "RentalWorks",
+        "iCode": "",
+        "barcode": ""
+      },
+      "id": "dev_proc1",
+      "class": "processor",
+      "make": "Brompton",
+      "model": "SX40",
+      "label": "PROC-1"
+    },
+    {
+      "rackId": null,
+      "ru": 0,
+      "powerW": 0,
+      "weightLb": 180,
+      "qty": 1,
+      "ports": [],
+      "inventoryRef": {},
+      "id": "dev_dist1",
+      "class": "distro",
+      "make": "Motion Labs",
+      "model": "200A 3Ø",
+      "label": "LED DISTRO 1"
+    },
+    {
+      "rackId": "rack_v1",
+      "ru": 3,
+      "powerW": 300,
+      "weightLb": 30,
+      "qty": 1,
+      "ports": [
+        {
+          "id": "p_sw1_pgm",
+          "name": "PGM OUT",
+          "type": "3G-SDI",
+          "dir": "out"
+        }
+      ],
+      "inventoryRef": {},
+      "id": "dev_sw1",
+      "class": "switcher",
+      "make": "Ross",
+      "model": "Carbonite Ultra",
+      "label": "SW-1"
+    },
+    {
+      "rackId": "rack_v1",
+      "ru": 4,
+      "powerW": 800,
+      "weightLb": 45,
+      "qty": 1,
+      "ports": [
+        {
+          "id": "p_srvA_out1",
+          "name": "DP OUT 1",
+          "type": "DP1.4",
+          "dir": "out"
+        },
+        {
+          "id": "p_srvA_in1",
+          "name": "SDI IN 1",
+          "type": "3G-SDI",
+          "dir": "in"
+        }
+      ],
+      "inventoryRef": {},
+      "id": "dev_srvA",
+      "class": "server",
+      "make": "disguise",
+      "model": "vx 2",
+      "label": "SRV-A"
+    },
+    {
+      "rackId": "rack_v1",
+      "ru": 4,
+      "powerW": 800,
+      "weightLb": 45,
+      "qty": 1,
+      "ports": [
+        {
+          "id": "p_srvB_out1",
+          "name": "DP OUT 1",
+          "type": "DP1.4",
+          "dir": "out"
+        }
+      ],
+      "inventoryRef": {},
+      "id": "dev_srvB",
+      "class": "server",
+      "make": "disguise",
+      "model": "vx 2",
+      "label": "SRV-B"
+    },
+    {
+      "rackId": "rack_v1",
+      "ru": 1,
+      "powerW": 0,
+      "weightLb": 8,
+      "qty": 1,
+      "ports": [],
+      "inventoryRef": {},
+      "id": "dev_pdu1",
+      "class": "rackPdu",
+      "make": "SurgeX",
+      "model": "SX-1120-RT",
+      "label": "PDU-1"
+    }
+  ],
+  "cables": [
+    {
+      "id": "cab_pgm_srvA",
+      "type": "SDI",
+      "length_ft": 10,
+      "fromPort": "p_sw1_pgm",
+      "toPort": "p_srvA_in1",
+      "label": "PGM → SRV-A",
+      "redundancyGroup": null
+    },
+    {
+      "id": "cab_srvA_proc1",
+      "type": "SDI",
+      "length_ft": 6,
+      "fromPort": "p_srvA_out1",
+      "toPort": "p_proc1_in1",
+      "label": "SRV-A → PROC-1",
+      "redundancyGroup": "A"
+    },
+    {
+      "id": "cab_proc1_wall",
+      "type": "fiberLED",
+      "length_ft": 150,
+      "fromPort": "p_proc1_out1",
+      "toPort": null,
+      "label": "PROC-1 → US Wall",
+      "redundancyGroup": "A"
+    }
+  ],
+  "led": {
+    "walls": [
+      {
+        "id": "wall_us",
+        "name": "US Wall",
+        "tileModel": "ROE CB5",
+        "cols": 25,
+        "rows": 7,
+        "tileW_mm": 500,
+        "tileH_mm": 500,
+        "pitch_mm": 5.77,
+        "trimHeight_ft": 38,
+        "rigging": {
+          "type": "flown",
+          "headers": 5,
+          "points": []
+        },
+        "processorIds": [
+          "dev_proc1"
+        ],
+        "dataRuns": [
+          {
+            "portId": "p_proc1_out1",
+            "tileChain": [],
+            "redundant": false
+          }
+        ],
+        "power": {
+          "phase": "3Ø",
+          "circuits": [
+            {
+              "id": "ckt_us_a1",
+              "amps": 20,
+              "tiles": []
+            }
+          ],
+          "distroId": "dev_dist1"
+        }
+      }
+    ],
+    "canvas": {
+      "w_px": 2400,
+      "h_px": 672,
+      "mappings": [
+        {
+          "wallId": "wall_us",
+          "x": 0,
+          "y": 0
+        }
+      ]
+    }
+  },
+  "signal": {
+    "nodes": [
+      {
+        "id": "sig_sw1",
+        "deviceId": "dev_sw1",
+        "role": "switcher",
+        "x": 100,
+        "y": 200
+      },
+      {
+        "id": "sig_srvA",
+        "deviceId": "dev_srvA",
+        "role": "source",
+        "x": 300,
+        "y": 200
+      },
+      {
+        "id": "sig_proc1",
+        "deviceId": "dev_proc1",
+        "role": "processor",
+        "x": 500,
+        "y": 200
+      }
+    ],
+    "links": [
+      {
+        "id": "lnk_pgm",
+        "cableId": "cab_pgm_srvA",
+        "format": "1080p59.94",
+        "path": "A",
+        "label": "PGM"
+      },
+      {
+        "id": "lnk_srv_proc",
+        "cableId": "cab_srvA_proc1",
+        "format": "3840x2160p59.94",
+        "path": "A",
+        "label": "LED FEED"
+      }
+    ],
+    "formats": {
+      "house": "1080p59.94",
+      "ledInput": "3840x2160p59.94",
+      "record": "1080p59.94"
+    },
+    "redundancy": [],
+    "network": {
+      "vlans": [
+        {
+          "id": 10,
+          "name": "Control",
+          "subnet": "10.10.0.0/24"
+        }
+      ],
+      "hosts": [
+        {
+          "deviceId": "dev_proc1",
+          "vlan": 10,
+          "ip": "10.10.0.21"
+        }
+      ]
+    }
+  },
+  "racks": [
+    {
+      "id": "rack_v1",
+      "name": "VIDEO 1",
+      "ruTotal": 24,
+      "caseModel": "",
+      "location": "video world",
+      "slots": [
+        {
+          "ru": 1,
+          "deviceId": "dev_pdu1"
+        },
+        {
+          "ru": 3,
+          "deviceId": "dev_proc1"
+        },
+        {
+          "ru": 6,
+          "deviceId": "dev_sw1"
+        },
+        {
+          "ru": 10,
+          "deviceId": "dev_srvA"
+        },
+        {
+          "ru": 15,
+          "deviceId": "dev_srvB"
+        }
+      ],
+      "power": {
+        "inlet": "L21-30",
+        "pduIds": [
+          "dev_pdu1"
+        ],
+        "circuitIds": []
+      }
+    }
+  ],
+  "servers": {
+    "hosts": [
+      {
+        "id": "srv_a",
+        "deviceId": "dev_srvA",
+        "platform": "disguise",
+        "role": "master",
+        "outputs": [
+          {
+            "portId": "p_srvA_out1",
+            "resolution": "3840x2160",
+            "refresh": 59.94,
+            "feedsWallId": "wall_us"
+          }
+        ],
+        "inputs": [
+          {
+            "portId": "p_srvA_in1",
+            "source": "PGM"
+          }
+        ],
+        "timecode": "LTC",
+        "failover": "srv_b"
+      },
+      {
+        "id": "srv_b",
+        "deviceId": "dev_srvB",
+        "platform": "disguise",
+        "role": "backup",
+        "outputs": [
+          {
+            "portId": "p_srvB_out1",
+            "resolution": "3840x2160",
+            "refresh": 59.94,
+            "feedsWallId": "wall_us"
+          }
+        ],
+        "inputs": [],
+        "timecode": "LTC",
+        "failover": null
+      }
+    ],
+    "content": {
+      "canvasRef": "led.canvas",
+      "contentSpecs": [
+        {
+          "wallId": "wall_us",
+          "w_px": 2400,
+          "h_px": 672,
+          "codec": "HAP",
+          "fps": 59.94
+        }
+      ]
+    }
+  },
+  "binder": {
+    "sections": [],
+    "annotations": [],
+    "checks": [],
+    "schedule": [
+      {
+        "id": "sch_loadin",
+        "key": "load-in",
+        "date": "2026-11-14",
+        "time": "08:00",
+        "item": "Load-in",
+        "owner": "crewChief",
+        "confirmed": true
+      },
+      {
+        "id": "sch_show",
+        "key": "show",
+        "date": "2026-11-14",
+        "time": "20:00",
+        "item": "Show",
+        "owner": "videoDirector",
+        "confirmed": true
+      }
+    ],
+    "contacts": []
+  },
+  "tasks": [
+    {
+      "id": "task_a1",
+      "key": "A1",
+      "lane": "advance",
+      "title": "Confirm show date and venue",
+      "status": "todo",
+      "owner": "pm",
+      "about": [],
+      "blockedBy": [],
+      "source": "setup",
+      "history": [
+        {
+          "at": "2026-10-30T08:00:00Z",
+          "by": "store",
+          "from": "todo",
+          "to": "todo",
+          "note": "seeded at setup"
+        }
+      ],
+      "produces": {
+        "kind": "all",
+        "of": [
+          {
+            "kind": "path-set",
+            "path": "/event/dates/0"
+          },
+          {
+            "kind": "path-set",
+            "path": "/event/venueName"
+          }
+        ]
+      }
+    },
+    {
+      "id": "task_a2",
+      "key": "A2",
+      "lane": "advance",
+      "title": "Confirm vendor order ref",
+      "status": "todo",
+      "owner": "pm",
+      "about": [],
+      "blockedBy": [],
+      "source": "setup",
+      "history": [
+        {
+          "at": "2026-10-30T08:00:00Z",
+          "by": "store",
+          "from": "todo",
+          "to": "todo",
+          "note": "seeded at setup"
+        }
+      ],
+      "produces": {
+        "kind": "path-set",
+        "path": "/vendor/orderRef"
+      },
+      "dueFrom": {
+        "scheduleId": "sch_loadin",
+        "offsetDays": -21
+      }
+    },
+    {
+      "id": "task_a3",
+      "key": "A3",
+      "lane": "advance",
+      "title": "Get venue power service (amps, phase, location)",
+      "status": "todo",
+      "owner": "eic",
+      "about": [],
+      "blockedBy": [
+        "task_a1"
+      ],
+      "source": "setup",
+      "history": [
+        {
+          "at": "2026-10-30T08:00:00Z",
+          "by": "store",
+          "from": "todo",
+          "to": "todo",
+          "note": "seeded at setup"
+        }
+      ],
+      "produces": {
+        "kind": "path-set",
+        "path": "/event/power/amps"
+      },
+      "dueFrom": {
+        "scheduleId": "sch_loadin",
+        "offsetDays": -14
+      }
+    },
+    {
+      "id": "task_a4",
+      "key": "A4",
+      "lane": "advance",
+      "title": "Get rigging plot and trim limits",
+      "status": "todo",
+      "owner": "ledLead",
+      "about": [],
+      "blockedBy": [
+        "task_a1"
+      ],
+      "source": "setup",
+      "history": [
+        {
+          "at": "2026-10-30T08:00:00Z",
+          "by": "store",
+          "from": "todo",
+          "to": "todo",
+          "note": "seeded at setup"
+        }
+      ],
+      "produces": {
+        "kind": "path-set",
+        "path": "/event/rigging/maxTrim_ft"
+      },
+      "dueFrom": {
+        "scheduleId": "sch_loadin",
+        "offsetDays": -14
+      }
+    },
+    {
+      "id": "task_a6",
+      "key": "A6",
+      "lane": "advance",
+      "title": "Issue advance Rev 1",
+      "status": "todo",
+      "owner": "videoDirector",
+      "about": [],
+      "blockedBy": [],
+      "source": "setup",
+      "history": [
+        {
+          "at": "2026-10-30T08:00:00Z",
+          "by": "store",
+          "from": "todo",
+          "to": "todo",
+          "note": "seeded at setup"
+        }
+      ],
+      "produces": {
+        "kind": "status",
+        "status": "issued"
+      },
+      "consumes": [
+        {
+          "kind": "check-clear",
+          "code": "*"
+        }
+      ],
+      "dueFrom": {
+        "scheduleId": "sch_loadin",
+        "offsetDays": -7
+      }
+    },
+    {
+      "id": "task_c1",
+      "key": "C1",
+      "lane": "crew",
+      "title": "Name Crew Chief and EIC",
+      "status": "todo",
+      "owner": "pm",
+      "about": [
+        "crewChief",
+        "eic"
+      ],
+      "blockedBy": [],
+      "source": "setup",
+      "history": [
+        {
+          "at": "2026-10-30T08:00:00Z",
+          "by": "store",
+          "from": "todo",
+          "to": "todo",
+          "note": "seeded at setup"
+        }
+      ],
+      "produces": {
+        "kind": "all",
+        "of": [
+          {
+            "kind": "path-set",
+            "path": "/crew/crewChief"
+          },
+          {
+            "kind": "path-set",
+            "path": "/crew/eic"
+          }
+        ]
+      },
+      "dueFrom": {
+        "scheduleId": "sch_loadin",
+        "offsetDays": -21
+      }
+    },
+    {
+      "id": "task_c2",
+      "key": "C2",
+      "lane": "crew",
+      "title": "Name LED Lead, Camera Lead, Server Op",
+      "status": "todo",
+      "owner": "crewChief",
+      "about": [
+        "ledLead",
+        "cameraLead",
+        "serverOp"
+      ],
+      "blockedBy": [
+        "task_c1"
+      ],
+      "source": "setup",
+      "history": [
+        {
+          "at": "2026-10-30T08:00:00Z",
+          "by": "store",
+          "from": "todo",
+          "to": "todo",
+          "note": "seeded at setup"
+        }
+      ],
+      "produces": {
+        "kind": "all",
+        "of": [
+          {
+            "kind": "path-set",
+            "path": "/crew/ledLead"
+          },
+          {
+            "kind": "path-set",
+            "path": "/crew/cameraLead"
+          },
+          {
+            "kind": "path-set",
+            "path": "/crew/serverOp"
+          }
+        ]
+      },
+      "dueFrom": {
+        "scheduleId": "sch_loadin",
+        "offsetDays": -14
+      }
+    },
+    {
+      "id": "task_c3",
+      "key": "C3",
+      "lane": "crew",
+      "title": "Confirm call times",
+      "status": "todo",
+      "owner": "crewChief",
+      "about": [],
+      "blockedBy": [
+        "task_a1"
+      ],
+      "source": "setup",
+      "history": [
+        {
+          "at": "2026-10-30T08:00:00Z",
+          "by": "store",
+          "from": "todo",
+          "to": "todo",
+          "note": "seeded at setup"
+        }
+      ],
+      "produces": {
+        "kind": "count-min",
+        "path": "/binder/schedule",
+        "min": 2
+      },
+      "dueFrom": {
+        "scheduleId": "sch_loadin",
+        "offsetDays": -10
+      }
+    },
+    {
+      "id": "task_c4",
+      "key": "C4",
+      "lane": "crew",
+      "title": "Book local labor count",
+      "status": "todo",
+      "owner": "crewChief",
+      "about": [
+        "localLabor"
+      ],
+      "blockedBy": [
+        "task_a3",
+        "task_l1"
+      ],
+      "source": "setup",
+      "history": [
+        {
+          "at": "2026-10-30T08:00:00Z",
+          "by": "store",
+          "from": "todo",
+          "to": "todo",
+          "note": "seeded at setup"
+        }
+      ],
+      "produces": {
+        "kind": "path-set",
+        "path": "/crew/localLabor"
+      },
+      "dueFrom": {
+        "scheduleId": "sch_loadin",
+        "offsetDays": -7
+      }
+    },
+    {
+      "id": "task_c5",
+      "key": "C5",
+      "lane": "crew",
+      "title": "Issue crew sheet",
+      "status": "todo",
+      "owner": "crewChief",
+      "about": [],
+      "blockedBy": [
+        "task_c2",
+        "task_c3",
+        "task_c4"
+      ],
+      "source": "setup",
+      "history": [
+        {
+          "at": "2026-10-30T08:00:00Z",
+          "by": "store",
+          "from": "todo",
+          "to": "todo",
+          "note": "seeded at setup"
+        }
+      ],
+      "dueFrom": {
+        "scheduleId": "sch_loadin",
+        "offsetDays": -5
+      }
+    },
+    {
+      "id": "task_l1",
+      "key": "L1",
+      "lane": "led",
+      "title": "Size every wall",
+      "status": "todo",
+      "owner": "ledLead",
+      "about": [
+        "wall_us"
+      ],
+      "blockedBy": [
+        "task_a4"
+      ],
+      "source": "setup",
+      "history": [
+        {
+          "at": "2026-10-30T08:00:00Z",
+          "by": "store",
+          "from": "todo",
+          "to": "todo",
+          "note": "seeded at setup"
+        }
+      ],
+      "produces": {
+        "kind": "all",
+        "of": [
+          {
+            "kind": "count-min",
+            "path": "/led/walls",
+            "min": 1
+          },
+          {
+            "kind": "path-set",
+            "path": "/led/walls/*/cols"
+          },
+          {
+            "kind": "path-set",
+            "path": "/led/walls/*/rows"
+          },
+          {
+            "kind": "check-clear",
+            "code": "LED-006"
+          }
+        ]
+      },
+      "dueFrom": {
+        "scheduleId": "sch_loadin",
+        "offsetDays": -14
+      }
+    },
+    {
+      "id": "task_l2",
+      "key": "L2",
+      "lane": "led",
+      "title": "Assign processors and split data runs",
+      "status": "todo",
+      "owner": "ledLead",
+      "about": [
+        "wall_us"
+      ],
+      "blockedBy": [
+        "task_l1"
+      ],
+      "source": "setup",
+      "history": [
+        {
+          "at": "2026-10-30T08:00:00Z",
+          "by": "store",
+          "from": "todo",
+          "to": "todo",
+          "note": "seeded at setup"
+        }
+      ],
+      "produces": {
+        "kind": "check-clear",
+        "code": "LED-001"
+      },
+      "dueFrom": {
+        "scheduleId": "sch_loadin",
+        "offsetDays": -10
+      }
+    },
+    {
+      "id": "task_l3",
+      "key": "L3",
+      "lane": "led",
+      "title": "Assign distro and circuits",
+      "status": "todo",
+      "owner": "eic",
+      "about": [
+        "wall_us"
+      ],
+      "blockedBy": [
+        "task_a3",
+        "task_l1"
+      ],
+      "source": "setup",
+      "history": [
+        {
+          "at": "2026-10-30T08:00:00Z",
+          "by": "store",
+          "from": "todo",
+          "to": "todo",
+          "note": "seeded at setup"
+        }
+      ],
+      "produces": {
+        "kind": "all",
+        "of": [
+          {
+            "kind": "check-clear",
+            "code": "LED-002"
+          },
+          {
+            "kind": "check-clear",
+            "code": "LED-003"
+          }
+        ]
+      },
+      "dueFrom": {
+        "scheduleId": "sch_loadin",
+        "offsetDays": -10
+      }
+    },
+    {
+      "id": "task_s1",
+      "key": "S1",
+      "lane": "signal",
+      "title": "Set house and LED input formats",
+      "status": "todo",
+      "owner": "eic",
+      "about": [],
+      "blockedBy": [],
+      "source": "setup",
+      "history": [
+        {
+          "at": "2026-10-30T08:00:00Z",
+          "by": "store",
+          "from": "todo",
+          "to": "todo",
+          "note": "seeded at setup"
+        }
+      ],
+      "produces": {
+        "kind": "path-set",
+        "path": "/signal/formats/house"
+      }
+    },
+    {
+      "id": "task_s2",
+      "key": "S2",
+      "lane": "signal",
+      "title": "Patch program path A to every processor",
+      "status": "todo",
+      "owner": "eic",
+      "about": [],
+      "blockedBy": [
+        "task_l2",
+        "task_v1"
+      ],
+      "source": "setup",
+      "history": [
+        {
+          "at": "2026-10-30T08:00:00Z",
+          "by": "store",
+          "from": "todo",
+          "to": "todo",
+          "note": "seeded at setup"
+        }
+      ],
+      "produces": {
+        "kind": "check-clear",
+        "code": "SIG-006"
+      },
+      "dueFrom": {
+        "scheduleId": "sch_loadin",
+        "offsetDays": -10
+      }
+    },
+    {
+      "id": "task_s3",
+      "key": "S3",
+      "lane": "signal",
+      "title": "Patch path B and define redundancy groups",
+      "status": "todo",
+      "owner": "eic",
+      "about": [],
+      "blockedBy": [
+        "task_s2"
+      ],
+      "source": "setup",
+      "history": [
+        {
+          "at": "2026-10-30T08:00:00Z",
+          "by": "store",
+          "from": "todo",
+          "to": "todo",
+          "note": "seeded at setup"
+        }
+      ],
+      "produces": {
+        "kind": "check-clear",
+        "code": "SIG-009"
+      },
+      "dueFrom": {
+        "scheduleId": "sch_loadin",
+        "offsetDays": -7
+      }
+    },
+    {
+      "id": "task_s4",
+      "key": "S4",
+      "lane": "signal",
+      "title": "Confirm camera and CCU count, fibre plan",
+      "status": "todo",
+      "owner": "cameraLead",
+      "about": [],
+      "blockedBy": [
+        "task_c2"
+      ],
+      "source": "setup",
+      "history": [
+        {
+          "at": "2026-10-30T08:00:00Z",
+          "by": "store",
+          "from": "todo",
+          "to": "todo",
+          "note": "seeded at setup"
+        }
+      ],
+      "produces": {
+        "kind": "count-min",
+        "path": "/devices?class=camera",
+        "min": 6
+      },
+      "dueFrom": {
+        "scheduleId": "sch_loadin",
+        "offsetDays": -10
+      }
+    },
+    {
+      "id": "task_s5",
+      "key": "S5",
+      "lane": "signal",
+      "title": "Clear single points of failure or accept risk",
+      "status": "todo",
+      "owner": "eic",
+      "about": [],
+      "blockedBy": [
+        "task_s3"
+      ],
+      "source": "setup",
+      "history": [
+        {
+          "at": "2026-10-30T08:00:00Z",
+          "by": "store",
+          "from": "todo",
+          "to": "todo",
+          "note": "seeded at setup"
+        }
+      ],
+      "produces": {
+        "kind": "check-clear",
+        "code": "SIG-008"
+      },
+      "dueFrom": {
+        "scheduleId": "sch_loadin",
+        "offsetDays": -5
+      }
+    },
+    {
+      "id": "task_v1",
+      "key": "V1",
+      "lane": "servers",
+      "title": "Set server outputs to wall canvas",
+      "status": "todo",
+      "owner": "serverOp",
+      "about": [
+        "srv_a",
+        "srv_b"
+      ],
+      "blockedBy": [
+        "task_l1"
+      ],
+      "source": "setup",
+      "history": [
+        {
+          "at": "2026-10-30T08:00:00Z",
+          "by": "store",
+          "from": "todo",
+          "to": "todo",
+          "note": "seeded at setup"
+        }
+      ],
+      "produces": {
+        "kind": "all",
+        "of": [
+          {
+            "kind": "check-clear",
+            "code": "SRV-001"
+          },
+          {
+            "kind": "check-clear",
+            "code": "SRV-002"
+          }
+        ]
+      },
+      "dueFrom": {
+        "scheduleId": "sch_loadin",
+        "offsetDays": -10
+      }
+    },
+    {
+      "id": "task_v2",
+      "key": "V2",
+      "lane": "servers",
+      "title": "Pair failover",
+      "status": "todo",
+      "owner": "serverOp",
+      "about": [
+        "srv_a",
+        "srv_b"
+      ],
+      "blockedBy": [
+        "task_v1"
+      ],
+      "source": "setup",
+      "history": [
+        {
+          "at": "2026-10-30T08:00:00Z",
+          "by": "store",
+          "from": "todo",
+          "to": "todo",
+          "note": "seeded at setup"
+        }
+      ],
+      "produces": {
+        "kind": "check-clear",
+        "code": "SRV-003"
+      },
+      "dueFrom": {
+        "scheduleId": "sch_loadin",
+        "offsetDays": -7
+      }
+    },
+    {
+      "id": "task_r1",
+      "key": "R1",
+      "lane": "rack",
+      "title": "Place every device, no RU conflicts",
+      "status": "todo",
+      "owner": "eic",
+      "about": [
+        "rack_v1"
+      ],
+      "blockedBy": [
+        "task_l2",
+        "task_s2",
+        "task_v1"
+      ],
+      "source": "setup",
+      "history": [
+        {
+          "at": "2026-10-30T08:00:00Z",
+          "by": "store",
+          "from": "todo",
+          "to": "todo",
+          "note": "seeded at setup"
+        }
+      ],
+      "produces": {
+        "kind": "all",
+        "of": [
+          {
+            "kind": "check-clear",
+            "code": "RCK-001"
+          },
+          {
+            "kind": "check-clear",
+            "code": "RCK-002"
+          },
+          {
+            "kind": "check-clear",
+            "code": "RCK-004"
+          }
+        ]
+      },
+      "dueFrom": {
+        "scheduleId": "sch_loadin",
+        "offsetDays": -7
+      }
+    },
+    {
+      "id": "task_r2",
+      "key": "R2",
+      "lane": "rack",
+      "title": "PDU and inlet per rack",
+      "status": "todo",
+      "owner": "eic",
+      "about": [
+        "rack_v1"
+      ],
+      "blockedBy": [
+        "task_r1"
+      ],
+      "source": "setup",
+      "history": [
+        {
+          "at": "2026-10-30T08:00:00Z",
+          "by": "store",
+          "from": "todo",
+          "to": "todo",
+          "note": "seeded at setup"
+        }
+      ],
+      "produces": {
+        "kind": "all",
+        "of": [
+          {
+            "kind": "check-clear",
+            "code": "RCK-003"
+          },
+          {
+            "kind": "check-clear",
+            "code": "RCK-005"
+          }
+        ]
+      },
+      "dueFrom": {
+        "scheduleId": "sch_loadin",
+        "offsetDays": -7
+      }
+    },
+    {
+      "id": "task_p1",
+      "key": "P1",
+      "lane": "prep",
+      "title": "Review pull sheet against record",
+      "status": "todo",
+      "owner": "crewChief",
+      "about": [],
+      "blockedBy": [
+        "task_a2",
+        "task_r1"
+      ],
+      "source": "setup",
+      "history": [
+        {
+          "at": "2026-10-30T08:00:00Z",
+          "by": "store",
+          "from": "todo",
+          "to": "todo",
+          "note": "seeded at setup"
+        }
+      ],
+      "dueFrom": {
+        "scheduleId": "sch_loadin",
+        "offsetDays": -5
+      }
+    }
+  ],
+  "physical": {
+    "positions": [],
+    "paths": [],
+    "trunks": [],
+    "stock": {}
+  }
+}

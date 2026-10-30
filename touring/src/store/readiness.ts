@@ -26,6 +26,7 @@ export function unfedProcessors(r: ShowRecord): string[] {
     const d = r.devices.find((x) => x.id === id);
     if (!d) { out.push(id); continue; }
     const inPorts = new Set(d.ports.filter((p) => p.dir !== "out" && VIDEO_IN.includes(p.type)).map((p) => p.id));
+    if (!inPorts.size) continue; // XD / receiving units take data from their processor, not a video input
     const fed = r.cables.some((c) => c.toPort && inPorts.has(c.toPort) && linkedCables.has(c.id));
     if (!fed) out.push(id);
   }

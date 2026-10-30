@@ -4,7 +4,7 @@ import { addWall, autoCircuits, autoProcessors, autoSplitRuns, setCanvas, sizeWa
 import { newId } from "../../store/ids";
 import type { ShowRecord, Wall } from "../../store/types";
 import { CheckCard, Edit, Empty, fmt, PageHead, Panel, Stat } from "../kit";
-import { useRecord, useWriter } from "../state";
+import { useRecord, useWriter, isFrozen } from "../state";
 
 const RUN_COLORS = ["#e08a1e", "#2f8fcf", "#3aa65a", "#c2416b", "#8b6fd6", "#c9a227", "#1fa3a3", "#d0603a"];
 
@@ -13,7 +13,7 @@ export function LedView() {
   const led = useWriter("led");
   const [sel, setSel] = useState<string | null>(r.led.walls[0]?.id ?? null);
   const [layer, setLayer] = useState<"data" | "power">("data");
-  const frozen = r.meta.status !== "draft";
+  const frozen = isFrozen(r);
   const wall = r.led.walls.find((w) => w.id === sel) ?? r.led.walls[0];
   const tiles = useMemo(() => LIBRARY.templates.filter((t) => t.class === "tile"), []);
   const checks = r.binder.checks.filter((c) => !c.resolved && c.module === "led");
@@ -116,10 +116,12 @@ function WallDetail({ r, wall, frozen, layer, setLayer, tiles }: { r: ShowRecord
 
 function TileMap({ wall, layer, r }: { wall: Wall; layer: "data" | "power"; r: ShowRecord }) {
   const cell = Math.max(8, Math.min(28, Math.floor(720 / Math.max(1, wall.cols))));
-  const aspect = (wall.tileH_mm || 500) / (wall.tileW_mm || 500);
+  const px = r.derived.led.perWall[wall.id];
+  const aspect = px && px.w_px && wall.cols && wall.rows ? (px.h_px / wall.rows) / (px.w_px / wall.cols) : (wall.tileH_mm || 500) / (wall.tileW_mm || 500);
   const ch = cell * aspect;
   const owner = new Map<string, number>();
-  const groups = layer === "data" ? wall.dataRuns.map((d) => d.tileChain) : wall.power.circuits.map((c) => c.tiles);
+  // Redundant (backup) runs cover the same tiles as their primaries, so the map colours primaries only.
+  const groups = layer === "data" ? wall.dataRuns.map((d) => (d.redundant ? [] : d.tileChain)) : wall.power.circuits.map((c) => c.tiles);
   groups.forEach((g, i) => g.forEach(([c, rw]) => owner.set(`${c},${rw}`, i)));
   const W = wall.cols * cell, H = wall.rows * ch;
   if (!wall.cols || !wall.rows) return <Empty>Size the wall to see its tiles.</Empty>;
@@ -137,7 +139,7 @@ function TileMap({ wall, layer, r }: { wall: Wall; layer: "data" | "power"; r: S
       </div>
       <ul className="flex flex-wrap gap-x-4 gap-y-1 text-xs">
         {layer === "data" ? wall.dataRuns.map((d, i) => (
-          <li key={i} className="flex items-center gap-1"><span className="inline-block w-3 h-3" style={{ background: RUN_COLORS[i % RUN_COLORS.length] }} />run {i + 1} · {d.tileChain.length} tiles · {portName(d.portId)}{d.redundant && " · redundant"}</li>
+          <li key={i} className="flex items-center gap-1"><span className="inline-block w-3 h-3" style={d.redundant ? { border: "1px dashed rgb(var(--dim))" } : { background: RUN_COLORS[i % RUN_COLORS.length] }} />run {i + 1} · {d.tileChain.length} tiles · {portName(d.portId)}{d.redundant && " · redundant"}</li>
         )) : wall.power.circuits.map((c, i) => {
           const load = r.derived.power.byCircuit[c.id];
           return <li key={c.id} className="flex items-center gap-1"><span className="inline-block w-3 h-3" style={{ background: RUN_COLORS[i % RUN_COLORS.length] }} />{c.amps} A · {c.tiles.length} tiles{load && <span className={load.pct > 0.8 ? "text-block" : ""}> · {Math.round(load.pct * 100)}%</span>}</li>;

@@ -4,7 +4,7 @@ import { getAt } from "../../store/pointer";
 import type { ConfirmState, Confirmed, EventType, Patch, ShowRecord } from "../../store/types";
 import { EVENT_TYPES } from "../../store/types";
 import { ConfirmChip, Edit, fmt, PageHead, Panel } from "../kit";
-import { useApp, useRecord, useWriter } from "../state";
+import { useApp, useRecord, useWriter, isFrozen } from "../state";
 
 type FieldType = "number" | "text" | "bool";
 interface Sub { key: string; label: string; type: FieldType | string[] }
@@ -64,7 +64,7 @@ export function AdvanceView() {
   const { ws, showId, toast, focus } = useApp();
   const shell = useWriter("shell");
   const [sec, setSec] = useState(() => SECTIONS.find((s) => focus && s.qs.some((q) => focus.startsWith(q.path)))?.id ?? "identity");
-  const frozen = r.meta.status !== "draft";
+  const frozen = isFrozen(r);
   const mem = ws.venue(r.event.venueId) ?? ws.venueList().find((v) => v.venueName && v.venueName === r.event.venueName && v.city === r.event.city);
 
   const counts = (qs: Q[]) => {

@@ -1,0 +1,44 @@
+{
+  "showId": "3b1d6f0e-2c4a-4e57-9a0b-7f5d1c2e8a91",
+  "showCode": "EX-2026-002",
+  "tourId": null,
+  "name": "Trunk plan arena · one stage-to-video-world SDI run",
+  "client": { "artist": "Example Artist", "management": "", "productionCo": "" },
+  "event": {
+    "type": "arena", "dates": ["2026-11-20"], "venueId": "", "venueName": "Example Arena", "city": "Nashville", "state": "TN", "room": "Main Bowl",
+    "access": {
+      "stageDims": { "value": { "width_ft": 60, "depth_ft": 40, "wingSL_ft": 20, "wingSR_ft": 20 }, "state": "confirmed", "source": "tech-pack" },
+      "videoWorld": { "value": { "location": "Stage left floor", "toStage_ft": 150, "toFOH_ft": 180, "toDistro_ft": 40 }, "state": "confirmed", "source": "site-visit" }
+    }
+  },
+  "vendor": { "company": "Fuse Operations", "orderRef": "000000", "orderSystem": "RentalWorks" },
+  "meta": { "status": "draft", "revision": 1, "schemaVersion": "1.0.0", "source": "example", "createdAt": "2026-10-30T08:00:00Z", "updatedAt": "2026-10-30T08:00:00Z", "updatedBy": "shell", "changelog": [] },
+  "devices": [
+    { "id": "dev_sw1", "class": "switcher", "make": "Ross", "model": "Carbonite Ultra", "label": "SW-1", "qty": 1, "rackId": "rack_v1", "ru": 2, "powerW": 150, "weightLb": 18,
+      "ports": [ { "id": "p_sw1_pgm", "name": "PGM OUT", "type": "12G-SDI", "dir": "out" }, { "id": "p_sw1_aux1", "name": "AUX 1", "type": "12G-SDI", "dir": "out" } ], "inventoryRef": {} },
+    { "id": "dev_proc1", "class": "processor", "make": "Brompton", "model": "Tessera SX40", "label": "PROC-1", "qty": 1, "rackId": null, "ru": 2, "powerW": 140, "weightLb": 16.5, "positionId": "pos_stage_sl",
+      "ports": [ { "id": "p_proc1_sdi", "name": "12G-SDI IN", "type": "12G-SDI", "dir": "in" }, { "id": "p_proc1_out1", "name": "10G OUT 1", "type": "fiberLED", "dir": "out" } ],
+      "spec": { "protocol": "Brompton", "acceptedFormats": ["1080p59.94", "3840x2160p59.94"] }, "inventoryRef": {} }
+  ],
+  "cables": [
+    { "id": "cab_sw1_proc1", "type": "SDI", "length_ft": 200, "fromPort": "p_sw1_aux1", "toPort": "p_proc1_sdi", "label": "SDI-001", "redundancyGroup": null }
+  ],
+  "led": {
+    "walls": [ { "id": "wall_us", "name": "US Wall", "tileModel": "ROE CB5", "cols": 0, "rows": 0, "tileW_mm": 600, "tileH_mm": 1200, "pitch_mm": 5.77, "trimHeight_ft": 30,
+                 "rigging": { "type": "flown", "headers": 0, "points": [] }, "processorIds": ["dev_proc1"], "dataRuns": [],
+                 "power": { "phase": "3Ø", "circuits": [], "distroId": null } } ],
+    "canvas": { "w_px": 0, "h_px": 0, "mappings": [] }
+  },
+  "signal": {
+    "nodes": [ { "id": "sig_sw1", "deviceId": "dev_sw1", "role": "switcher", "x": 300, "y": 100 }, { "id": "sig_proc1", "deviceId": "dev_proc1", "role": "processor", "x": 700, "y": 100 } ],
+    "links": [ { "id": "lnk_aux1", "cableId": "cab_sw1_proc1", "format": "3840x2160p59.94", "path": "A", "label": "LED FEED" } ],
+    "formats": { "house": "1080p59.94", "ledInput": "3840x2160p59.94", "record": "1080p59.94" },
+    "redundancy": [],
+    "network": { "vlans": [], "hosts": [] }
+  },
+  "racks": [ { "id": "rack_v1", "name": "VIDEO 1", "ruTotal": 24, "caseModel": "", "location": "video world", "slots": [ { "ru": 1, "deviceId": "dev_sw1" } ], "power": { "inlet": "L21-30", "pduIds": [], "circuitIds": [] } } ],
+  "servers": { "hosts": [], "content": { "canvasRef": "led.canvas", "contentSpecs": [] } },
+  "binder": { "sections": [], "annotations": [], "checks": [], "schedule": [], "contacts": [] },
+  "physical": { "positions": [], "paths": [], "trunks": [], "stock": {} },
+  "derived": {}
+}

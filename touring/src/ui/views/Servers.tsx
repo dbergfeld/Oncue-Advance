@@ -2,12 +2,12 @@ import { addServerPair, assignOutputs, syncContentSpecs } from "../../modules/se
 import { newId } from "../../store/ids";
 import type { ServerHost } from "../../store/types";
 import { CheckCard, Edit, Empty, PageHead, Panel } from "../kit";
-import { useRecord, useWriter } from "../state";
+import { useRecord, useWriter, isFrozen } from "../state";
 
 export function ServersView() {
   const r = useRecord()!;
   const srv = useWriter("servers");
-  const frozen = r.meta.status !== "draft";
+  const frozen = isFrozen(r);
   const checks = r.binder.checks.filter((c) => !c.resolved && c.module === "servers");
   const label = (h: ServerHost) => r.devices.find((d) => d.id === h.deviceId)?.label ?? h.id;
   const portName = (pid: string) => { for (const d of r.devices) { const p = d.ports.find((x) => x.id === pid); if (p) return p.name; } return "?"; };

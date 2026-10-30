@@ -270,6 +270,13 @@ function snapshot(record: ShowRecord, path: string): string {
   return JSON.stringify(values.map((v) => (isConfirmed(v) ? v.value : v)));
 }
 
+function countOf(record: ShowRecord, path: string): number {
+  const { values, wild } = selectPath(record, path);
+  if (wild) return values.filter(isSet).length;
+  const u = usable(values[0]);
+  return Array.isArray(u) ? u.length : isSet(u) ? 1 : 0;
+}
+
 function walkLeaves(obj: unknown, base: string, cb: (path: string, leaf: { value: unknown; state: string }) => void) {
   if (!obj || typeof obj !== "object" || Array.isArray(obj)) return;
   for (const [k, v] of Object.entries(obj as Record<string, unknown>)) {
@@ -385,7 +392,9 @@ function changedAfterHandoff(prev: ShowRecord, record: ShowRecord, tasks: Task[]
       if (!("path" in leaf)) continue;
       const was = selectPath(prev, leaf.path).values;
       if (!was.some(isSet)) continue;
-      if (snapshot(prev, leaf.path) !== snapshot(record, leaf.path)) fired.set(leaf.path, { producer: t });
+      // count-min is about how many, not what: only a count change counts as a change.
+      const changed = leaf.kind === "count-min" ? countOf(prev, leaf.path) !== countOf(record, leaf.path) : snapshot(prev, leaf.path) !== snapshot(record, leaf.path);
+      if (changed) fired.set(leaf.path, { producer: t });
     }
   }
   walkLeaves(prev.event, "/event", (path, leaf) => {

@@ -4,14 +4,14 @@ import { addRack, autoRack, firstFreeRu, placeDevice, unplaceDevice } from "../.
 import { newId } from "../../store/ids";
 import type { Rack, ShowRecord } from "../../store/types";
 import { CheckCard, Empty, fmt, PageHead, Panel } from "../kit";
-import { useRecord, useWriter } from "../state";
+import { useRecord, useWriter, isFrozen } from "../state";
 
 const U = 18;
 
 export function RackView() {
   const r = useRecord()!;
   const rack = useWriter("rack");
-  const frozen = r.meta.status !== "draft";
+  const frozen = isFrozen(r);
   const unracked = r.devices.filter((d) => d.ru > 0 && !d.rackId);
   const checks = r.binder.checks.filter((c) => !c.resolved && c.module === "rack");
   const [pdu, setPdu] = useState("tpl_surgex_sx1120");

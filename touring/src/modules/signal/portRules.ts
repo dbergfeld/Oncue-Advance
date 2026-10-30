@@ -74,7 +74,7 @@ const STD_W: Record<number, number> = { 480: 720, 486: 720, 576: 720, 720: 1280,
  */
 export function parseFormat(s: string | null | undefined): Format | null {
   if (!s || typeof s !== "string") return null;
-  const t = s.trim().replace(/×/g, "x").replace(/\s+/g, "").replace(/@/g, "").toLowerCase();
+  const t = s.trim().replace(/×/g, "x").replace(/\s+/g, "").replace(/(\d)@/, "$1p").replace(/@/g, "").toLowerCase();
   let m = /^(\d{3,5})x(\d{3,5})(?:([pi])?(\d+(?:\.\d+)?))?$/.exec(t);
   if (m) {
     const rate = m[4] ? Number(m[4]) : 60;

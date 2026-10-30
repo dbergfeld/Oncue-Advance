@@ -2,7 +2,7 @@ import { setSchedule } from "../../setup/wizard";
 import { newId } from "../../store/ids";
 import type { Contact, ScheduleEntry } from "../../store/types";
 import { Edit, Empty, PageHead, Panel } from "../kit";
-import { explain, useApp, useRecord, useWriter } from "../state";
+import { explain, useApp, useRecord, useWriter, isFrozen } from "../state";
 
 const ROLES: [keyof ReturnType<typeof crewOf>, string][] = [
   ["videoDirector", "Video Director"], ["crewChief", "Crew Chief"], ["eic", "EIC"], ["ledLead", "LED Lead"],
@@ -16,7 +16,7 @@ export function CrewView() {
   const r = useRecord()!;
   const { ws, showId, toast } = useApp();
   const shell = useWriter("shell");
-  const frozen = r.meta.status !== "draft";
+  const frozen = isFrozen(r);
   const sched = [...r.binder.schedule].sort((a, b) => `${a.date} ${a.time}`.localeCompare(`${b.date} ${b.time}`));
   const tasksFor = (role: string) => r.tasks.filter((t) => t.owner === role && t.status !== "done" && t.status !== "na").length;
 

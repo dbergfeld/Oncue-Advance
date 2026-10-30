@@ -127,6 +127,7 @@ export class Workspace {
       if (own) { errors.push(own); break; }
       const frozen = checkFrozen(by, draft.meta.status, op, draft);
       if (frozen) { errors.push(frozen); break; }
+      if (by !== "store" && (draft.meta.source === "example" || draft.meta.source === "template")) { errors.push({ code: "E_FROZEN", path: op.path, msg: "example and template shows are read-only — copy to a new show to edit" }); break; }
       if (draft.meta.status !== "draft" && op.path === "/showCode") { errors.push({ code: "E_FROZEN", path: op.path, msg: "showCode is editable only while draft" }); break; }
       if ((op.op === "replace" || op.op === "remove") && op.ifHash) {
         const cur = hashOf(getAt(draft, entityPointer(op.path)));
@@ -437,6 +438,7 @@ export class Workspace {
     const at = this.clock();
     const next = structuredClone(r) as ShowRecord;
     next.meta.status = "issued";
+    next.meta.updatedBy = "shell";
     next.meta.changelog.push({ rev: next.meta.rev + 1, at, by: "shell", reason: `issueShow → REV ${next.meta.revision}` });
     // Record wins over status: user-done tasks whose condition fails reopen at issue.
     next.meta.rev += 1;
@@ -568,8 +570,10 @@ function mergeChecks(r: ShowRecord, drafts: (CheckDraft & { module: ModuleId | "
       out.push({ ...c, resolved: true, resolution: "fixed", resolvedBy: "store", resolvedAt: at });
     } else out.push(c);
   }
-  // Drop store-fixed checks after they've been seen fixed for a while, to keep the list readable.
-  r.binder.checks = out.filter((c) => !(c.resolvedBy === "store" && c.resolved && c.resolvedAt && c.resolvedAt < at && out.length > 200));
+  // Store-fixed checks are kept so a recurrence reopens with its history; cap them at the 200 most recent.
+  const fixed = out.filter((c) => c.resolvedBy === "store" && c.resolved).sort((a, b) => (b.resolvedAt ?? "").localeCompare(a.resolvedAt ?? ""));
+  const drop = new Set(fixed.slice(200).map((c) => c.id));
+  r.binder.checks = drop.size ? out.filter((c) => !drop.has(c.id)) : out;
 }
 
 function appendEventChecks(r: ShowRecord, drafts: (CheckDraft & { module: ModuleId | "store" })[], at: string) {

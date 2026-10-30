@@ -3,7 +3,7 @@ import { engine } from "../../engine";
 import { airtablePayload, importPullSheet } from "../../setup/importers";
 import type { Check, Severity } from "../../store/types";
 import { CheckCard, CopyText, Empty, Modal, PageHead, Panel, SevChip } from "../kit";
-import { explain, useApp, useRecord, useWriter } from "../state";
+import { explain, useApp, useRecord, useWriter, isFrozen } from "../state";
 
 const SEV: Severity[] = ["block", "warn", "info"];
 
@@ -77,7 +77,7 @@ export function BinderView() {
             <Panel title="RentalWorks pull sheet">
               <p className="text-dim mb-2 text-[13px]">Paste a pull-sheet CSV (I-Code, description, qty). Matched items become devices; unknown I-Codes land as unclassified devices with a check; a changed order raises warnings instead of editing the record.</p>
               <textarea id="rw-csv" className="inp font-mono text-xs w-full" rows={6} value={csv} onChange={(e) => setCsv(e.target.value)} placeholder={"I-Code,Description,Qty\n100234,ROE CB5,24"} />
-              <button className="btn mt-2" disabled={!csv.trim() || r.meta.status !== "draft"} onClick={() => {
+              <button className="btn mt-2" disabled={!csv.trim() || isFrozen(r)} onClick={() => {
                 try { const res = importPullSheet(ws, showId!, csv) as unknown; toast("ok", `Imported pull sheet${res && typeof res === "object" && "matched" in res ? `: ${(res as { matched: number }).matched} matched` : ""}`); setCsv(""); }
                 catch (e) { toast("error", (e as Error).message); }
               }}>Import</button>

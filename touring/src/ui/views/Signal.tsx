@@ -5,7 +5,7 @@ import { proposeTrunkPlan, seedPhysical } from "../../modules/signal/physical";
 import { newId } from "../../store/ids";
 import type { Device, ShowRecord } from "../../store/types";
 import { CheckCard, Empty, PageHead, Panel } from "../kit";
-import { useRecord, useWriter } from "../state";
+import { useRecord, useWriter, isFrozen } from "../state";
 
 type Layer = "logical" | "physical" | "build";
 const COL: Record<string, number> = { camera: 0, ccu: 1, server: 2, switcher: 2, router: 3, converter: 3, recorder: 4, monitor: 4, processor: 5, patchPanel: 3, fiber: 3 };
@@ -20,7 +20,7 @@ function portOwner(r: ShowRecord) {
 export function SignalView() {
   const r = useRecord()!;
   const sig = useWriter("signal");
-  const frozen = r.meta.status !== "draft";
+  const frozen = isFrozen(r);
   const [layer, setLayer] = useState<Layer>("logical");
   const [selLink, setSelLink] = useState<string | null>(null);
   const ports = useMemo(() => portOwner(r), [r]);
@@ -66,7 +66,7 @@ export function SignalView() {
       <div className="flex flex-wrap gap-2 items-center" role="tablist">
         <span className="label">Layer</span>
         {(["logical", "physical", "build"] as Layer[]).map((l) => <button key={l} role="tab" aria-selected={layer === l} className={`btn ${layer === l ? "border-accent text-accent" : ""}`} onClick={() => setLayer(l)}>{l}</button>)}
-        <span className="text-xs text-dim">Drag devices to arrange. Click a line to inspect it.</span>
+        <span className="text-xs text-dim">Drag devices to arrange. Click a line to inspect it{r.signal.links.length > 10 ? " and see its label" : ""}.</span>
       </div>
       <div className="grid gap-4 xl:grid-cols-[1fr_22rem]">
         <div className="scroll-x border border-line rounded-sm bg-panel min-w-0">
@@ -99,7 +99,7 @@ export function SignalView() {
                   <g key={l.id} onClick={() => setSelLink(l.id)} className="cursor-pointer">
                     <path d={`M${x1},${y1} C${mx},${y1} ${mx},${y2} ${x2},${y2}`} fill="none" stroke={bad ? "rgb(var(--block))" : col} strokeWidth={selLink === l.id ? 3.5 : 1.8} markerEnd="url(#arr)" strokeDasharray={l.path === "B" ? "6 3" : undefined} />
                     <path d={`M${x1},${y1} C${mx},${y1} ${mx},${y2} ${x2},${y2}`} fill="none" stroke="transparent" strokeWidth={12} />
-                    <text x={mx} y={(y1 + y2) / 2 - 4} fontSize={10} textAnchor="middle" fill="rgb(var(--ink))" fontFamily="IBM Plex Mono, monospace" paintOrder="stroke" stroke="rgb(var(--panel))" strokeWidth={3}>{txt}</text>
+                    {(r.signal.links.length <= 10 || selLink === l.id) && <text x={mx} y={(y1 + y2) / 2 - 4} fontSize={10} textAnchor="middle" fill="rgb(var(--ink))" fontFamily="IBM Plex Mono, monospace" paintOrder="stroke" stroke="rgb(var(--panel))" strokeWidth={3}>{txt}</text>}
                   </g>
                 );
               })}

@@ -138,3 +138,8 @@ export function explain(res: Result): string {
   };
   return `${nice[e.code] ?? e.code}: ${e.msg}`;
 }
+
+/** Inputs are editable only on a draft that is not an example or template. */
+export function isFrozen(r: ShowRecord): boolean {
+  return r.meta.status !== "draft" || r.meta.source === "example" || r.meta.source === "template";
+}

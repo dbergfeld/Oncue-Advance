@@ -539,8 +539,12 @@ export function instantiate(t: DeviceTemplate, label: string, newId: NewId): Dev
   };
 }
 
-/** Smallest "<PREFIX>-n" label not already used in devices[] (labels are unique per collection). */
-export function nextLabel(used: Iterable<string>, prefix: string, start = 1): string {
+/** Smallest "<PREFIX><sep>n" label not already used (labels are unique per collection). `pad` zero-pads n ("LED-001"). */
+export function nextLabel(used: Iterable<string>, prefix: string, start = 1, opts: { sep?: string; pad?: number } = {}): string {
   const set = new Set([...used].map((l) => l.trim().toLowerCase()));
-  for (let i = start; ; i++) if (!set.has(`${prefix}-${i}`.toLowerCase())) return `${prefix}-${i}`;
+  const sep = opts.sep ?? "-";
+  for (let i = start; ; i++) {
+    const l = `${prefix}${sep}${String(i).padStart(opts.pad ?? 0, "0")}`;
+    if (!set.has(l.toLowerCase())) return l;
+  }
 }
