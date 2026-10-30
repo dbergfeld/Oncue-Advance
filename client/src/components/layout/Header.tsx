@@ -1,10 +1,11 @@
 import { useShow } from "../../context/ShowContext";
 import { useUsers } from "../../context/UserContext";
 import { formatDate } from "../../utils/format";
+import { isSupabaseConfigured } from "../../lib/supabaseClient";
 
 export function Header() {
   const { shows, selectedShow, selectShow } = useShow();
-  const { users, activeUser, setActiveUser } = useUsers();
+  const { users, activeUser, setActiveUser, signOut } = useUsers();
 
   const sortedShows = [...shows].sort((a, b) => a.date.localeCompare(b.date));
 
@@ -44,21 +45,35 @@ export function Header() {
 
         <div className="h-6 w-px bg-surface-border" />
 
-        <select
-          className="oc-select w-40 py-1.5 text-xs"
-          value={activeUser?.id ?? ""}
-          onChange={(e) => {
-            const user = users.find((u) => u.id === e.target.value);
-            if (user) setActiveUser(user);
-          }}
-          title="Acting as (Phase 1/2 has no real auth — see Settings)"
-        >
-          {users.map((u) => (
-            <option key={u.id} value={u.id}>
-              {u.name}
-            </option>
-          ))}
-        </select>
+        {isSupabaseConfigured ? (
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-neutral-300" title={activeUser?.email}>
+              {activeUser?.name ?? "…"}
+            </span>
+            <button
+              onClick={() => signOut()}
+              className="rounded-md border border-surface-border px-2 py-1 text-xs text-neutral-400 hover:text-neutral-200"
+            >
+              Sign out
+            </button>
+          </div>
+        ) : (
+          <select
+            className="oc-select w-40 py-1.5 text-xs"
+            value={activeUser?.id ?? ""}
+            onChange={(e) => {
+              const user = users.find((u) => u.id === e.target.value);
+              if (user) setActiveUser(user);
+            }}
+            title="Acting as (demo mode — no Supabase project configured, see Settings)"
+          >
+            {users.map((u) => (
+              <option key={u.id} value={u.id}>
+                {u.name}
+              </option>
+            ))}
+          </select>
+        )}
       </div>
     </header>
   );

@@ -16,6 +16,24 @@ coreRouter.get(
   })
 );
 
+// -- Current session identity (Supabase mode's replacement for the demo "acting as" picker) --
+
+coreRouter.get(
+  "/me",
+  asyncHandler(async (req, res) => {
+    if (!req.actorId) {
+      res.status(401).json({ error: "Not signed in." });
+      return;
+    }
+    const user = await prisma.user.findUnique({ where: { id: req.actorId } });
+    if (!user) {
+      res.status(401).json({ error: "Not signed in." });
+      return;
+    }
+    res.json(user);
+  })
+);
+
 // -- Tours --
 
 coreRouter.get(

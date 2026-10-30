@@ -175,10 +175,12 @@ enum EntityType {
 // ---------------------------------------------------------------------------
 
 model User {
-  id    String @id @default(uuid())
-  email String @unique
-  name  String
-  role  String @default("crew")
+  id         String  @id @default(uuid())
+  email      String  @unique
+  name       String
+  role       String  @default("crew")
+  supabaseId String? @unique
+  isAdmin    Boolean @default(false)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

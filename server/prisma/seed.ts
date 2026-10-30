@@ -99,8 +99,8 @@ async function main() {
     prisma.user.create({ data: { email: "m.reyes@radiustour.com", name: "M. Reyes", role: "Advance Coordinator" } }),
     prisma.user.create({ data: { email: "t.nguyen@radiustour.com", name: "T. Nguyen", role: "Video Systems Lead" } }),
     prisma.user.create({ data: { email: "r.okafor@radiustour.com", name: "R. Okafor", role: "Camera Lead" } }),
-    prisma.user.create({ data: { email: "video.director@radiustour.com", name: "Video Director", role: "Video Director" } }),
-    prisma.user.create({ data: { email: "tour.manager@radiustour.com", name: "Tour Manager", role: "Tour Manager" } }),
+    prisma.user.create({ data: { email: "video.director@radiustour.com", name: "Video Director", role: "Video Director", isAdmin: true } }),
+    prisma.user.create({ data: { email: "tour.manager@radiustour.com", name: "Tour Manager", role: "Tour Manager", isAdmin: true } }),
   ]);
 
   console.log("Seeding timeline stage definitions...");
