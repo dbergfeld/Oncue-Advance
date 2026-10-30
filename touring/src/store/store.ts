@@ -7,7 +7,7 @@ import { addAt, deepFreeze, getAt, hashOf, parsePointer, removeAt, replaceAt, st
 import { entityIndex, refProblems, type RefProblem } from "./refs";
 import { schemaErrors } from "./schema";
 import type {
-  Check, CheckDraft, Derived, EventType, IdPrefix, LibraryLookup, ModuleContract, ModuleId, Patch, Result,
+  CameraNote, Check, CheckDraft, Derived, EventType, IdPrefix, LibraryLookup, ModuleContract, ModuleId, Patch, Result,
   Revision, ShowRecord, ShowSource, ShowStatus, StoreError, SystemProfile, Task, TaskStatus, WriterId,
 } from "./types";
 import { SCHEMA_VERSION } from "./types";
@@ -58,8 +58,8 @@ export interface ShowAPI {
 
 export interface Change { showId: string; paths: string[]; rev: number; by: WriterId }
 
-const AUTO_CHECK = /^(SIG|LED|SRV|RCK|BND|PHY)-\d/;
-const MODULE_LANE: Record<string, Task["lane"]> = { led: "led", signal: "signal", rack: "rack", servers: "servers", binder: "advance", store: "advance" };
+const AUTO_CHECK = /^(SIG|LED|SRV|RCK|BND|PHY|SHW)-\d/;
+const MODULE_LANE: Record<string, Task["lane"]> = { led: "led", signal: "signal", rack: "rack", servers: "servers", binder: "advance", show: "advance", store: "advance" };
 
 export class StoreFailure extends Error {
   constructor(public errors: StoreError[]) { super(errors.map((e) => `${e.code} ${e.path}: ${e.msg}`).join("; ")); }
@@ -156,7 +156,7 @@ export class Workspace {
       if (typeErr) errors.push({ code: "E_REF_TYPE", path: typeErr.site.path, msg: `${typeErr.site.value} is not a ${typeErr.site.expect.join("/")}_ reference` });
       else if (fresh.length) {
         if (opts.cascade) {
-          const cascadeErr = this.cascade(draft, by, fresh);
+          const cascadeErr = this.cascade(draft, by, fresh, before);
           if (cascadeErr) errors.push(cascadeErr);
           fresh = refProblems(draft).filter((p) => !beforeProblems.has(pkey(p)));
           if (!cascadeErr && fresh.length) errors.push({ code: "E_ORPHAN_DELETE", path: fresh[0].site.path, msg: `still referenced at ${fresh[0].site.path}` });
@@ -195,7 +195,7 @@ export class Workspace {
   }
 
   /** Cascade rules: null what can be nulled, delete dependent cables/links, mark tasks na. */
-  private cascade(draft: ShowRecord, by: WriterId, problems: RefProblem[]): StoreError | null {
+  private cascade(draft: ShowRecord, by: WriterId, problems: RefProblem[], before: ShowRecord): StoreError | null {
     const sliceOf: Record<string, WriterId> = { led: "led", racks: "rack", servers: "servers", signal: "signal" };
     // Devices in another module's dataRun or rack slot are never cascade-deleted from that slice.
     for (const p of problems) {
@@ -210,7 +210,15 @@ export class Workspace {
       for (const p of probs.sort((a, b) => b.site.path.localeCompare(a.site.path))) {
         const s = p.site;
         const segs = parsePointer(s.path);
-        if (s.nullable) replaceAt(draft, s.path, null);
+        if (segs[0] === "show" && segs[5] === "cameraNotes") {
+          // A camera cut from the order takes its notes out of the grid; they are parked in show.unbound (SHW-001 warns)
+          // until the director reassigns or deletes them.
+          const note = getAt(draft, s.path) as CameraNote | undefined;
+          const song = getAt(draft, `/show/setlists/${segs[2]}/songs/${segs[4]}`) as { title?: string } | undefined;
+          if (note) draft.show.unbound.push({ ...note, songTitle: song?.title ?? "", cameraLabel: before.devices.find((d) => d.id === note.cameraId)?.label ?? note.cameraId });
+          removeAt(draft, s.path);
+        }
+        else if (s.nullable) replaceAt(draft, s.path, null);
         else if (s.arrayItem) removeAt(draft, s.path);
         else if (segs[0] === "cables") removeAt(draft, `/cables/${segs[1]}`);
         else if (segs[0] === "signal" && segs[1] === "links") removeAt(draft, `/signal/links/${segs[2]}`);
@@ -308,7 +316,7 @@ export class Workspace {
       check: (c) => {
         const id = newId("chk");
         const at = ws.clock();
-        const chk: Check = { id, code: c.code ?? "NOTE", module: (["led", "signal", "rack", "servers", "binder"].includes(by) ? by : "store") as Check["module"], severity: c.severity,
+        const chk: Check = { id, code: c.code ?? "NOTE", module: (["led", "signal", "rack", "servers", "binder", "show"].includes(by) ? by : "store") as Check["module"], severity: c.severity,
           title: c.title ?? "Request", target: c.target, involved: [c.target], message: c.message, rule: "", evidence: [], fixes: [],
           resolved: false, firstSeen: at, lastSeen: at, rev: ws.get(showId).meta.rev };
         const r = ws.patch(showId, by, [{ op: "add", path: "/binder/checks/-", value: chk }], `check: ${c.message}`);
@@ -399,10 +407,10 @@ export class Workspace {
     let json = JSON.stringify(src);
     // Re-mint every prefixed id so two shows never share an entity id.
     const ids = new Set<string>();
-    json.replace(/"((?:dev|p|cab|wall|ckt|sig|lnk|rg|rack|srv|sec|ann|chk|task|pos|path|seg|jack|sch|con|svc|cam)_[A-Za-z0-9_]+)"/g, (_m, id) => { ids.add(id); return _m; });
+    json.replace(/"((?:dev|p|cab|wall|ckt|sig|lnk|rg|rack|srv|sec|ann|chk|task|pos|path|seg|jack|sch|con|svc|cam|sl|song|cue|note)_[A-Za-z0-9_]+)"/g, (_m, id) => { ids.add(id); return _m; });
     const map = new Map<string, string>();
     for (const id of ids) map.set(id, newId(id.slice(0, id.indexOf("_")) as IdPrefix));
-    json = json.replace(/"((?:dev|p|cab|wall|ckt|sig|lnk|rg|rack|srv|sec|ann|chk|task|pos|path|seg|jack|sch|con|svc|cam)_[A-Za-z0-9_]+)"/g, (m, id) => (map.has(id) ? `"${map.get(id)}"` : m));
+    json = json.replace(/"((?:dev|p|cab|wall|ckt|sig|lnk|rg|rack|srv|sec|ann|chk|task|pos|path|seg|jack|sch|con|svc|cam|sl|song|cue|note)_[A-Za-z0-9_]+)"/g, (m, id) => (map.has(id) ? `"${map.get(id)}"` : m));
     const r = normalize(JSON.parse(json));
     const fresh = blankRecord(uuid(), this.mintShowCode(src.client.artist || "SHOW", new Date(now).getFullYear()), "copy", now);
     r.showId = fresh.showId;
@@ -414,6 +422,21 @@ export class Workspace {
     r.binder = { ...r.binder, schedule: [], annotations: [], checks: r.binder.checks.filter((c) => !c.resolved) };
     r.devices.forEach((d) => { d.inventoryRef = { ...d.inventoryRef, barcode: "" }; delete d.ext; });
     r.tasks = r.tasks.map((t) => ({ ...t, history: [], userDone: false, status: "todo" }));
+    // Show Book carry-over: ids were re-minted above, so cameraIds stay bound to the copied cameras. Within a tour
+    // (shared non-null tourId) night two starts from night one's book; a copy outside a tour keeps the setlist too
+    // (a template run of show), and either way the run history, statuses, skips and any unfreeze are cleared.
+    r.show = {
+      ...r.show,
+      runLog: [],
+      unfrozen: null,
+      setlists: r.show.setlists.map((sl) => ({
+        ...sl, source: src.tourId && r.tourId === src.tourId ? "copy" as const : sl.source,
+        songs: sl.songs.map((song) => {
+          const { skipped: _skip, ...rest } = song;
+          return { ...rest, cues: song.cues.map((c) => ({ ...c, status: null })), cameraNotes: song.cameraNotes.map(({ previous: _p, ...n }) => n) };
+        }),
+      })),
+    };
     r.meta.changelog.push({ rev: 0, at: now, by: "shell", reason: `copyShow(${src.showCode})` });
     this.recompute(r, null, "store");
     this.set(r, null);
@@ -445,7 +468,9 @@ export class Workspace {
     next.meta.updatedAt = at;
     this.recompute(next, r, "shell");
     const openTasks = next.tasks.filter((t) => t.status !== "done" && t.status !== "na");
-    const list = [...this.revisions(showId), { rev: next.meta.revision, issuedAt: at, record: structuredClone(next), openTasks: structuredClone(openTasks) }];
+    // The active setlist version is snapshotted with the revision but never gates it (Show Book tab).
+    const setlist = next.show?.setlists.find((s) => s.id === next.show.activeSetlistId) ?? null;
+    const list = [...this.revisions(showId), { rev: next.meta.revision, issuedAt: at, record: structuredClone(next), openTasks: structuredClone(openTasks), setlist: structuredClone(setlist) }];
     this.revs.set(showId, list);
     this.rememberVenue(next);
     this.set(next, { showId, paths: ["/meta/status"], rev: next.meta.rev, by: "shell" });
@@ -461,6 +486,8 @@ export class Workspace {
     // Annotations and unresolved checks carry forward from the live record; resolved checks drop.
     next.binder.annotations = structuredClone(r.binder.annotations);
     next.binder.checks = structuredClone(r.binder.checks.filter((c) => !c.resolved));
+    // Setlist work runs in parallel with the advance and is not part of the revision: the live show book carries forward.
+    next.show = structuredClone(r.show);
     next.meta.status = "draft";
     next.meta.revision = snap.meta.revision + 1;
     next.meta.changelog = [...r.meta.changelog, { rev: next.meta.revision, from: snap.meta.revision, at, by: "shell", reason: reason || "revise" }];
@@ -526,7 +553,7 @@ function pkey(p: RefProblem) { return `${p.code}|${p.site.path}|${p.site.value}`
 /** For ifHash: the entity a pointer lands in (e.g. /devices/dev_x/label → /devices/dev_x). */
 function entityPointer(path: string): string {
   const segs = parsePointer(path);
-  const collections = new Set(["devices", "cables", "walls", "racks", "hosts", "links", "nodes", "tasks", "checks", "schedule", "contacts", "positions", "paths"]);
+  const collections = new Set(["devices", "cables", "walls", "racks", "hosts", "links", "nodes", "tasks", "checks", "schedule", "contacts", "positions", "paths", "setlists", "songs", "cues", "cameraNotes"]);
   let last = -1;
   segs.forEach((s, i) => { if (collections.has(segs[i - 1]) && s) last = i; });
   return last < 0 ? path : "/" + segs.slice(0, last + 1).join("/");

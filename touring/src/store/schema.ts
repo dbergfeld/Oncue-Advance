@@ -79,5 +79,50 @@ export function schemaErrors(r: ShowRecord, touched: string[]): StoreError[] {
     if (!idOk(c.id, "chk")) out.push(e(`/binder/checks/${c.id}`, "check id must be chk_*"));
     if (!SEVERITY.includes(c.severity)) out.push(e(`/binder/checks/${c.id}/severity`, "bad severity"));
   }
+  if (hit("/show")) out.push(...showSchema(r));
   return out.slice(0, 5);
+}
+
+const PRIORITIES = ["primary", "cover", "safety"];
+export const CUE_KINDS = ["camera", "server", "record", "wall", "lighting-sync", "safety", "other"];
+const CUE_STATUS = ["hit", "missed", "cut"];
+const ACTIONS = ["look", "record-start", "record-stop", "blackout", "cue-ref"];
+const SONG_TAGS = ["opener", "ballad", "uptempo", "acoustic", "encore", "walk-on", "walk-off", "interstitial"];
+const DURING = ["build", "rehearsal", "show"];
+
+/** Light E_SCHEMA for the Show Book slice: prefixed ids, closed enums, arrays where arrays belong. */
+function showSchema(r: ShowRecord): StoreError[] {
+  const out: StoreError[] = [];
+  const sb = r.show;
+  if (!sb || !Array.isArray(sb.setlists) || !Array.isArray(sb.cameraRoster) || !Array.isArray(sb.runLog) || !Array.isArray(sb.unbound))
+    return [e("/show", "show needs setlists[], cameraRoster[], runLog[] and unbound[]")];
+  if (sb.activeSetlistId !== null && !sb.setlists.some((s) => s.id === sb.activeSetlistId)) out.push(e("/show/activeSetlistId", "activeSetlistId must name a setlist or be null"));
+  const note = (n: { id: string; priority: string; shot?: unknown; authored?: { during?: string } }, p: string) => {
+    if (!idOk(n.id, "note")) out.push(e(p, "note id must be note_*"));
+    if (!PRIORITIES.includes(n.priority)) out.push(e(p + "/priority", `priority must be one of ${PRIORITIES.join(", ")}`));
+    if (typeof n.shot !== "string") out.push(e(p + "/shot", "shot must be text"));
+    if (n.authored && !DURING.includes(n.authored.during ?? "")) out.push(e(p + "/authored/during", `during must be one of ${DURING.join(", ")}`));
+  };
+  for (const sl of sb.setlists) {
+    const sp = `/show/setlists/${sl.id}`;
+    if (!idOk(sl.id, "sl")) out.push(e(sp, "setlist id must be sl_*"));
+    if (!Array.isArray(sl.songs)) { out.push(e(sp + "/songs", "songs must be an array")); continue; }
+    for (const s of sl.songs) {
+      const p = `${sp}/songs/${s.id}`;
+      if (!idOk(s.id, "song")) out.push(e(p, "song id must be song_*"));
+      if (typeof s.title !== "string") out.push(e(p + "/title", "title required"));
+      if (s.tag !== undefined && s.tag !== null && !SONG_TAGS.includes(s.tag)) out.push(e(p + "/tag", `unknown tag ${s.tag}`));
+      if (!Array.isArray(s.cues) || !Array.isArray(s.cameraNotes) || !Array.isArray(s.flags)) { out.push(e(p, "cues, cameraNotes and flags must be arrays")); continue; }
+      for (const c of s.cues) {
+        const cp = `${p}/cues/${c.id}`;
+        if (!idOk(c.id, "cue")) out.push(e(cp, "cue id must be cue_*"));
+        if (!CUE_KINDS.includes(c.kind)) out.push(e(cp + "/kind", `cue kind must be one of ${CUE_KINDS.join(", ")}`));
+        if (c.status != null && !CUE_STATUS.includes(c.status)) out.push(e(cp + "/status", "status must be hit, missed, cut or null"));
+        if (c.action && !ACTIONS.includes(c.action.type)) out.push(e(cp + "/action/type", `action type must be one of ${ACTIONS.join(", ")}`));
+      }
+      for (const n of s.cameraNotes) note(n, `${p}/cameraNotes/${n.id}`);
+    }
+  }
+  for (const n of sb.unbound) note(n, `/show/unbound/${n.id}`);
+  return out;
 }

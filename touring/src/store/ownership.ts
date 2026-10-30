@@ -32,6 +32,7 @@ const OWNS: Record<WriterId, string[]> = {
   rack: ["/racks", "/binder/annotations"],
   servers: ["/servers", "/binder/annotations"],
   binder: ["/binder"],
+  show: ["/show", "/binder/annotations"],
   mobile: ["/binder/annotations"],
   store: ["/"],
 };
@@ -121,6 +122,16 @@ function checkPath(by: WriterId, op: Patch, path: string, before: ShowRecord): S
     return null;
   }
 
+  if (top === "show") {
+    // Show Book: only `show` writes /show, except operators' ⚑ notes, which mobile appends as `cover`.
+    if (by === "show") return null;
+    if (by === "mobile") {
+      if (op.op === "add" && MOBILE_NOTE.test(path) && (op.value as { priority?: string } | null)?.priority === "cover") return null;
+      return err("E_NOT_OWNER", path, "mobile may only add cover-priority ⚑ notes to a song's cameraNotes");
+    }
+    return err("E_NOT_OWNER", path, `${by} does not own ${path}`);
+  }
+
   if (top === "binder" && segs[1] === "checks") {
     // Modules may append checks; only the Binder (and mobile) resolve them.
     if (by === "binder" || by === "mobile") return null;
@@ -132,10 +143,39 @@ function checkPath(by: WriterId, op: Patch, path: string, before: ShowRecord): S
   return err("E_NOT_OWNER", path, `${by} does not own ${path}`);
 }
 
+/** mobile's one content write: an operator ⚑ note appended to a song's cameraNotes. */
+const MOBILE_NOTE = /^\/show\/setlists\/[^/]+\/songs\/[^/]+\/cameraNotes\/-$/;
+
+/** Show-time writes the `show` writer may make while the setlist is frozen (show locked, not unfrozen). */
+const SHOW_LOCKED_ALLOW: { re: RegExp; ops: Patch["op"][] }[] = [
+  { re: /^\/show\/runLog\/-$/, ops: ["add"] },
+  { re: /^\/show\/setlists\/[^/]+\/songs\/[^/]+\/cues\/[^/]+\/status$/, ops: ["add", "replace", "remove"] },
+  { re: /^\/show\/setlists\/[^/]+\/songs\/[^/]+\/cameraNotes\/-$/, ops: ["add"] },
+  { re: /^\/show\/setlists\/[^/]+\/songs\/[^/]+\/cameraNotes\/[^/-][^/]*(\/.*)?$/, ops: ["add", "replace"] },
+  { re: /^\/show\/setlists\/[^/]+\/songs\/[^/]+\/skipped$/, ops: ["add", "replace"] },
+  { re: /^\/show\/unfrozen$/, ops: ["add", "replace"] },
+];
+
+/**
+ * /show follows the Show Book lifecycle table instead of the general rule: draft / issued — all;
+ * locked — runLog appends, cue status, quick notes, skip, unfreeze (everything while `show.unfrozen` is set),
+ * and mobile ⚑ notes; archived — none.
+ */
+function checkShowFrozen(by: WriterId, status: ShowStatus, op: Patch, before: ShowRecord): StoreError | null {
+  const path = op.path;
+  if (status === "archived") return err("E_FROZEN", path, "archived shows are read-only");
+  if (status !== "locked") return null;
+  if (by === "mobile") return null; // ownership already limits mobile to cover ⚑ notes
+  if (before.show?.unfrozen) return null;
+  if (op.op !== "move" && SHOW_LOCKED_ALLOW.some((a) => a.re.test(path) && a.ops.includes(op.op))) return null;
+  return err("E_FROZEN", path, "the setlist is frozen while the show is locked — Unfreeze setlist to reorder, add or remove songs and cues");
+}
+
 /** Frozen-state gate: which input paths stay writable after issue / lock. */
 export function checkFrozen(by: WriterId, status: ShowStatus, op: Patch, before: ShowRecord): StoreError | null {
   if (by === "store" || status === "draft") return null;
   const path = op.path;
+  if (startsWith(path, "/show") && (op.op !== "move" || startsWith(op.from, "/show"))) return checkShowFrozen(by, status, op, before);
   if (status === "archived") return err("E_FROZEN", path, "archived shows are read-only");
   if (startsWith(path, "/binder/annotations") || startsWith(path, "/binder/checks")) return null;
   if (status === "locked") {
@@ -167,6 +207,7 @@ export const ROUTES: [string, string][] = [
   ["/physical/", "signal"],
   ["/servers/", "servers"],
   ["/racks/", "rack"],
+  ["/show/", "show"],
   ["/binder/schedule", "advance"],
   ["/binder/", "binder"],
   ["/devices", "signal"],

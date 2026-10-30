@@ -69,6 +69,15 @@ export function ServersView() {
               })}</tbody></table>
           )}
         </Panel>
+        <Panel title="Looks by song">
+          {(() => {
+            const sl = r.show.setlists.find((x) => x.id === r.show.activeSetlistId);
+            const rows = (sl?.songs ?? []).filter((s) => s.lookRef).sort((a, b) => a.order - b.order);
+            if (!rows.length) return <Empty>No song looks yet. Set them per song in the Show Book.</Empty>;
+            return <table className="tbl text-[13px]"><thead><tr><th>#</th><th>Song</th><th>Server</th><th>Look</th></tr></thead>
+              <tbody>{rows.map((s) => <tr key={s.id}><td className="font-mono text-dim">{s.order}</td><td>{s.title}</td><td>{label(r.servers.hosts.find((h) => h.id === s.lookRef!.serverId) ?? r.servers.hosts[0])}</td><td className="font-mono">{s.lookRef!.lookName || "—"}</td></tr>)}</tbody></table>;
+          })()}
+        </Panel>
         <Panel title="Server checks">{checks.length === 0 ? <Empty>No open server checks.</Empty> : <div className="grid gap-2">{checks.map((c) => <CheckCard key={c.id} c={c} />)}</div>}</Panel>
       </div>
     </div>

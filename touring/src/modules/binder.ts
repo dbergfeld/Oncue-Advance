@@ -10,7 +10,7 @@ export const REQUIRED_SECTIONS: BinderSectionKey[] = ["front-view", "video-syste
 
 const TITLES: Record<BinderSectionKey, string> = {
   "front-view": "Front view", rigging: "Rigging", "video-system": "Video system", led: "LED", cameras: "Cameras", network: "Network",
-  foh: "FOH", power: "Power", schedule: "Schedule", contacts: "Contacts", notes: "Notes",
+  foh: "FOH", power: "Power", schedule: "Schedule", contacts: "Contacts", notes: "Notes", "show-book": "Show book",
 };
 
 /** `auto` blocks bind to `<module>.<exportKey>`; the Binder renders them live from that module's exports[]. */
@@ -19,13 +19,15 @@ export const AUTO_REFS: Record<BinderSectionKey, string[]> = {
   rigging: [],
   "video-system": ["signal.link-list", "signal.cable-pull", "signal.panel-schedule", "rack.rack-elevation", "servers.server-outputs"],
   led: ["led.led-summary"],
-  cameras: [],
+  cameras: ["show.camera-card"],
   network: [],
   foh: [],
   power: ["led.power-by-circuit", "binder.power-request"],
   schedule: ["binder.schedule"],
   contacts: ["binder.crew-sheet"],
   notes: [],
+  // Not required: a rehearsal-only show is never blocked by its show book (Cues & camera notes tab).
+  "show-book": ["show.director-book"],
 };
 
 /** Sections for a profile: 11 in default order, visibility per profile, required unless hidden by profile. */
@@ -281,8 +283,11 @@ export const binderModule: ModuleContract = {
   deviceClasses: [],
   cableTypes: [],
   seed(record, ctx): Patch[] {
-    if (record.binder.sections.length) return [];
-    return sectionsFor(profileFor(ctx.profile), (p) => ctx.newId(p)).map((s) => ({ op: "add" as const, path: "/binder/sections/-", value: s }));
+    // Idempotent: adds only the sections a record lacks (older records gain the show-book section).
+    const have = new Set(record.binder.sections.map((s) => s.key));
+    const maxOrder = Math.max(0, ...record.binder.sections.map((s) => s.order));
+    return sectionsFor(profileFor(ctx.profile), (p) => ctx.newId(p)).filter((s) => !have.has(s.key))
+      .map((s) => ({ op: "add" as const, path: "/binder/sections/-", value: have.size ? { ...s, order: Math.max(s.order, maxOrder + 1) } : s }));
   },
   derive() { return {}; },
   validate(record) { return validateBinder(record); },

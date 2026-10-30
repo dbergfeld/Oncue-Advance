@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { loadExample } from "../../setup/example";
+import { loadExample, loadSetlistExample } from "../../setup/example";
 import { Empty, Modal, PageHead, Panel } from "../kit";
 import { useApp, useWorkspaceVersion } from "../state";
 
@@ -26,7 +26,8 @@ export function ShowsView() {
       <PageHead title="Shows" sub="One record per show. A tour is a folder of shows that share a tour id."
         actions={<>
           <button className="btn btn-primary" onClick={() => openWizard(1, null)}>New show</button>
-          <button className="btn" onClick={() => { const r = loadExample(ws); open(r.showId); }}>Open example</button>
+          <button className="btn" onClick={() => { const r = loadExample(ws); open(r.showId); }}>Open arena example</button>
+          <button className="btn" onClick={() => { const r = loadSetlistExample(ws); setShowId(r.showId); go("showbook"); }}>Open show-day example</button>
           <button className="btn" onClick={() => setImporting(true)}>Import .oncue.json</button>
         </>} />
       <Panel>

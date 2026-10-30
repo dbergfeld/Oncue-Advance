@@ -1,0 +1,1845 @@
+{
+  "showId": "6f1d2a7c-3b9e-4c55-9a10-2e8d7b4c6a31",
+  "showCode": "SA-2026-001",
+  "tourId": "tour-example-2026",
+  "name": "Setlist Arena · Show book example",
+  "client": {
+    "artist": "Example Artist",
+    "management": "",
+    "productionCo": ""
+  },
+  "event": {
+    "type": "arena",
+    "dates": [
+      "2026-11-14"
+    ],
+    "venueId": "",
+    "venueName": "Example Arena",
+    "city": "Nashville",
+    "state": "TN",
+    "room": "Main Bowl"
+  },
+  "vendor": {
+    "company": "Fuse Operations",
+    "orderRef": "000000",
+    "orderSystem": "RentalWorks"
+  },
+  "crew": {
+    "videoDirector": "Flo Director",
+    "crewChief": "Ana Chief",
+    "eic": "Ben Engineer",
+    "ledLead": "",
+    "cameraLead": "Di Camera",
+    "serverOp": "Ed Server"
+  },
+  "meta": {
+    "status": "draft",
+    "revision": 1,
+    "schemaVersion": "1.0.0",
+    "source": "copy",
+    "createdAt": "2026-10-30T08:00:00Z",
+    "updatedAt": "2026-10-30T08:00:00Z",
+    "updatedBy": "shell",
+    "changelog": []
+  },
+  "devices": [
+    {
+      "id": "dev_proc1",
+      "class": "processor",
+      "make": "Brompton",
+      "model": "SX40",
+      "label": "PROC-1",
+      "qty": 1,
+      "rackId": "rack_v1",
+      "ru": 2,
+      "powerW": 450,
+      "weightLb": 22,
+      "ports": [
+        {
+          "id": "p_proc1_in1",
+          "name": "HDMI IN 1",
+          "type": "HDMI2.0",
+          "dir": "in"
+        },
+        {
+          "id": "p_proc1_out1",
+          "name": "10G OUT 1",
+          "type": "fiberLED",
+          "dir": "out"
+        }
+      ],
+      "inventoryRef": {
+        "system": "RentalWorks",
+        "iCode": "",
+        "barcode": ""
+      }
+    },
+    {
+      "id": "dev_dist1",
+      "class": "distro",
+      "make": "Motion Labs",
+      "model": "200A 3Ø",
+      "label": "LED DISTRO 1",
+      "qty": 1,
+      "rackId": null,
+      "ru": 0,
+      "powerW": 0,
+      "weightLb": 180,
+      "ports": [],
+      "inventoryRef": {}
+    },
+    {
+      "id": "dev_sw1",
+      "class": "switcher",
+      "make": "Ross",
+      "model": "Carbonite Ultra",
+      "label": "SW-1",
+      "qty": 1,
+      "rackId": "rack_v1",
+      "ru": 3,
+      "powerW": 300,
+      "weightLb": 30,
+      "ports": [
+        {
+          "id": "p_sw1_pgm",
+          "name": "PGM OUT",
+          "type": "3G-SDI",
+          "dir": "out"
+        }
+      ],
+      "inventoryRef": {}
+    },
+    {
+      "id": "dev_srvA",
+      "class": "server",
+      "make": "disguise",
+      "model": "vx 2",
+      "label": "SRV-A",
+      "qty": 1,
+      "rackId": "rack_v1",
+      "ru": 4,
+      "powerW": 800,
+      "weightLb": 45,
+      "ports": [
+        {
+          "id": "p_srvA_out1",
+          "name": "DP OUT 1",
+          "type": "DP1.4",
+          "dir": "out"
+        },
+        {
+          "id": "p_srvA_in1",
+          "name": "SDI IN 1",
+          "type": "3G-SDI",
+          "dir": "in"
+        }
+      ],
+      "inventoryRef": {}
+    },
+    {
+      "id": "dev_srvB",
+      "class": "server",
+      "make": "disguise",
+      "model": "vx 2",
+      "label": "SRV-B",
+      "qty": 1,
+      "rackId": "rack_v1",
+      "ru": 4,
+      "powerW": 800,
+      "weightLb": 45,
+      "ports": [
+        {
+          "id": "p_srvB_out1",
+          "name": "DP OUT 1",
+          "type": "DP1.4",
+          "dir": "out"
+        }
+      ],
+      "inventoryRef": {}
+    },
+    {
+      "id": "dev_pdu1",
+      "class": "rackPdu",
+      "make": "SurgeX",
+      "model": "SX-1120-RT",
+      "label": "PDU-1",
+      "qty": 1,
+      "rackId": "rack_v1",
+      "ru": 1,
+      "powerW": 0,
+      "weightLb": 8,
+      "ports": [],
+      "inventoryRef": {}
+    },
+    {
+      "id": "dev_cam1",
+      "class": "camera",
+      "make": "Sony",
+      "model": "HDC-3500",
+      "label": "CAM 1",
+      "qty": 1,
+      "rackId": null,
+      "ru": 0,
+      "powerW": 0,
+      "weightLb": 0,
+      "ports": [
+        {
+          "id": "p_cam1_out",
+          "name": "SDI OUT",
+          "type": "3G-SDI",
+          "dir": "out"
+        }
+      ],
+      "inventoryRef": {}
+    },
+    {
+      "id": "dev_cam2",
+      "class": "camera",
+      "make": "Sony",
+      "model": "HDC-3500",
+      "label": "CAM 2",
+      "qty": 1,
+      "rackId": null,
+      "ru": 0,
+      "powerW": 0,
+      "weightLb": 0,
+      "ports": [
+        {
+          "id": "p_cam2_out",
+          "name": "SDI OUT",
+          "type": "3G-SDI",
+          "dir": "out"
+        }
+      ],
+      "inventoryRef": {}
+    },
+    {
+      "id": "dev_cam3",
+      "class": "camera",
+      "make": "Sony",
+      "model": "HDC-3500",
+      "label": "CAM 3",
+      "qty": 1,
+      "rackId": null,
+      "ru": 0,
+      "powerW": 0,
+      "weightLb": 0,
+      "ports": [
+        {
+          "id": "p_cam3_out",
+          "name": "SDI OUT",
+          "type": "3G-SDI",
+          "dir": "out"
+        }
+      ],
+      "inventoryRef": {}
+    },
+    {
+      "id": "dev_cam4",
+      "class": "camera",
+      "make": "Sony",
+      "model": "HDC-3500",
+      "label": "CAM 4",
+      "qty": 1,
+      "rackId": null,
+      "ru": 0,
+      "powerW": 0,
+      "weightLb": 0,
+      "ports": [
+        {
+          "id": "p_cam4_out",
+          "name": "SDI OUT",
+          "type": "3G-SDI",
+          "dir": "out"
+        }
+      ],
+      "inventoryRef": {}
+    },
+    {
+      "id": "dev_cam5",
+      "class": "camera",
+      "make": "Sony",
+      "model": "HDC-3500",
+      "label": "CAM 5",
+      "qty": 1,
+      "rackId": null,
+      "ru": 0,
+      "powerW": 0,
+      "weightLb": 0,
+      "ports": [
+        {
+          "id": "p_cam5_out",
+          "name": "SDI OUT",
+          "type": "3G-SDI",
+          "dir": "out"
+        }
+      ],
+      "inventoryRef": {}
+    },
+    {
+      "id": "dev_cam6",
+      "class": "camera",
+      "make": "Sony",
+      "model": "HDC-3500",
+      "label": "CAM 6",
+      "qty": 1,
+      "rackId": null,
+      "ru": 0,
+      "powerW": 0,
+      "weightLb": 0,
+      "ports": [
+        {
+          "id": "p_cam6_out",
+          "name": "SDI OUT",
+          "type": "3G-SDI",
+          "dir": "out"
+        }
+      ],
+      "inventoryRef": {}
+    },
+    {
+      "id": "dev_hd1",
+      "class": "recorder",
+      "make": "Blackmagic",
+      "model": "HyperDeck Studio 4K Pro",
+      "label": "REC-1",
+      "qty": 1,
+      "rackId": null,
+      "ru": 0,
+      "powerW": 0,
+      "weightLb": 0,
+      "ports": [
+        {
+          "id": "p_hd1_in",
+          "name": "SDI IN",
+          "type": "3G-SDI",
+          "dir": "in"
+        }
+      ],
+      "inventoryRef": {}
+    }
+  ],
+  "cables": [
+    {
+      "id": "cab_pgm_srvA",
+      "type": "SDI",
+      "length_ft": 10,
+      "fromPort": "p_sw1_pgm",
+      "toPort": "p_srvA_in1",
+      "label": "PGM → SRV-A",
+      "redundancyGroup": null
+    },
+    {
+      "id": "cab_srvA_proc1",
+      "type": "SDI",
+      "length_ft": 6,
+      "fromPort": "p_srvA_out1",
+      "toPort": "p_proc1_in1",
+      "label": "SRV-A → PROC-1",
+      "redundancyGroup": "A"
+    },
+    {
+      "id": "cab_proc1_wall",
+      "type": "fiberLED",
+      "length_ft": 150,
+      "fromPort": "p_proc1_out1",
+      "toPort": null,
+      "label": "PROC-1 → US Wall",
+      "redundancyGroup": "A"
+    }
+  ],
+  "led": {
+    "walls": [
+      {
+        "id": "wall_us",
+        "name": "US Wall",
+        "tileModel": "ROE CB5",
+        "cols": 25,
+        "rows": 7,
+        "tileW_mm": 500,
+        "tileH_mm": 500,
+        "pitch_mm": 5.77,
+        "trimHeight_ft": 38,
+        "rigging": {
+          "type": "flown",
+          "headers": 5,
+          "points": []
+        },
+        "processorIds": [
+          "dev_proc1"
+        ],
+        "dataRuns": [
+          {
+            "portId": "p_proc1_out1",
+            "tileChain": [],
+            "redundant": false
+          }
+        ],
+        "power": {
+          "phase": "3Ø",
+          "circuits": [
+            {
+              "id": "ckt_us_a1",
+              "amps": 20,
+              "tiles": []
+            }
+          ],
+          "distroId": "dev_dist1"
+        }
+      }
+    ],
+    "canvas": {
+      "w_px": 2400,
+      "h_px": 672,
+      "mappings": [
+        {
+          "wallId": "wall_us",
+          "x": 0,
+          "y": 0
+        }
+      ]
+    }
+  },
+  "signal": {
+    "nodes": [
+      {
+        "id": "sig_sw1",
+        "deviceId": "dev_sw1",
+        "role": "switcher",
+        "x": 100,
+        "y": 200
+      },
+      {
+        "id": "sig_srvA",
+        "deviceId": "dev_srvA",
+        "role": "source",
+        "x": 300,
+        "y": 200
+      },
+      {
+        "id": "sig_proc1",
+        "deviceId": "dev_proc1",
+        "role": "processor",
+        "x": 500,
+        "y": 200
+      }
+    ],
+    "links": [
+      {
+        "id": "lnk_pgm",
+        "cableId": "cab_pgm_srvA",
+        "format": "1080p59.94",
+        "path": "A",
+        "label": "PGM"
+      },
+      {
+        "id": "lnk_srv_proc",
+        "cableId": "cab_srvA_proc1",
+        "format": "3840x2160p59.94",
+        "path": "A",
+        "label": "LED FEED"
+      }
+    ],
+    "formats": {
+      "house": "1080p59.94",
+      "ledInput": "3840x2160p59.94",
+      "record": "1080p59.94"
+    },
+    "redundancy": [],
+    "network": {
+      "vlans": [
+        {
+          "id": 10,
+          "name": "Control",
+          "subnet": "10.10.0.0/24"
+        }
+      ],
+      "hosts": [
+        {
+          "deviceId": "dev_proc1",
+          "vlan": 10,
+          "ip": "10.10.0.21"
+        }
+      ]
+    }
+  },
+  "racks": [
+    {
+      "id": "rack_v1",
+      "name": "VIDEO 1",
+      "ruTotal": 24,
+      "caseModel": "",
+      "location": "video world",
+      "slots": [
+        {
+          "ru": 1,
+          "deviceId": "dev_pdu1"
+        },
+        {
+          "ru": 3,
+          "deviceId": "dev_proc1"
+        },
+        {
+          "ru": 6,
+          "deviceId": "dev_sw1"
+        },
+        {
+          "ru": 10,
+          "deviceId": "dev_srvA"
+        },
+        {
+          "ru": 15,
+          "deviceId": "dev_srvB"
+        }
+      ],
+      "power": {
+        "inlet": "L21-30",
+        "pduIds": [
+          "dev_pdu1"
+        ],
+        "circuitIds": []
+      }
+    }
+  ],
+  "servers": {
+    "hosts": [
+      {
+        "id": "srv_a",
+        "deviceId": "dev_srvA",
+        "platform": "disguise",
+        "role": "master",
+        "outputs": [
+          {
+            "portId": "p_srvA_out1",
+            "resolution": "3840x2160",
+            "refresh": 59.94,
+            "feedsWallId": "wall_us"
+          }
+        ],
+        "inputs": [
+          {
+            "portId": "p_srvA_in1",
+            "source": "PGM"
+          }
+        ],
+        "timecode": "LTC",
+        "failover": "srv_b"
+      },
+      {
+        "id": "srv_b",
+        "deviceId": "dev_srvB",
+        "platform": "disguise",
+        "role": "backup",
+        "outputs": [
+          {
+            "portId": "p_srvB_out1",
+            "resolution": "3840x2160",
+            "refresh": 59.94,
+            "feedsWallId": "wall_us"
+          }
+        ],
+        "inputs": [],
+        "timecode": "LTC",
+        "failover": null
+      }
+    ],
+    "content": {
+      "canvasRef": "led.canvas",
+      "contentSpecs": [
+        {
+          "wallId": "wall_us",
+          "w_px": 2400,
+          "h_px": 672,
+          "codec": "HAP",
+          "fps": 59.94
+        }
+      ]
+    }
+  },
+  "binder": {
+    "sections": [],
+    "annotations": [],
+    "checks": [],
+    "schedule": [],
+    "contacts": [
+      {
+        "id": "con_camop2",
+        "name": "Camera Op 2",
+        "role": "camera operator",
+        "phone": "",
+        "email": ""
+      },
+      {
+        "id": "con_camop3",
+        "name": "Camera Op 3",
+        "role": "camera operator",
+        "phone": "",
+        "email": ""
+      },
+      {
+        "id": "con_camop4",
+        "name": "Camera Op 4",
+        "role": "camera operator",
+        "phone": "",
+        "email": ""
+      },
+      {
+        "id": "con_camop5",
+        "name": "Camera Op 5",
+        "role": "camera operator",
+        "phone": "",
+        "email": ""
+      },
+      {
+        "id": "con_camop6",
+        "name": "Camera Op 6",
+        "role": "camera operator",
+        "phone": "",
+        "email": ""
+      }
+    ]
+  },
+  "show": {
+    "setlists": [
+      {
+        "id": "sl_arena1",
+        "name": "Set · 2026-11-14",
+        "version": 3,
+        "source": "import",
+        "songs": [
+          {
+            "id": "song_01",
+            "order": 1,
+            "title": "Walk-On: House to Half",
+            "tag": "walk-on",
+            "durationSec": 90,
+            "cues": [
+              {
+                "id": "cue_01_1",
+                "order": 1,
+                "at": "house to half",
+                "call": "Roll record on REC-1",
+                "kind": "record",
+                "status": null,
+                "target": "dev_hd1",
+                "action": {
+                  "type": "record-start",
+                  "ref": "dev_hd1"
+                }
+              },
+              {
+                "id": "cue_01_2",
+                "order": 2,
+                "at": "house out",
+                "call": "Server to Look 1, IMAG black",
+                "kind": "server",
+                "status": null
+              }
+            ],
+            "cameraNotes": [
+              {
+                "id": "note_01_1",
+                "cameraId": "dev_cam6",
+                "shot": "crowd reverse as house goes to half",
+                "priority": "primary",
+                "authored": {
+                  "by": "videoDirector",
+                  "at": "2026-11-10T15:00:00Z",
+                  "during": "build"
+                },
+                "move": "handheld"
+              },
+              {
+                "id": "note_01_2",
+                "cameraId": "dev_cam1",
+                "shot": "wide, stage reveal",
+                "priority": "cover",
+                "authored": {
+                  "by": "videoDirector",
+                  "at": "2026-11-10T15:00:00Z",
+                  "during": "build"
+                },
+                "move": "static"
+              }
+            ],
+            "flags": [],
+            "lookRef": {
+              "serverId": "srv_a",
+              "lookName": "Look 1"
+            },
+            "wallState": [
+              {
+                "wallId": "wall_us",
+                "note": "content"
+              }
+            ]
+          },
+          {
+            "id": "song_02",
+            "order": 2,
+            "title": "Northern Lights",
+            "tag": "opener",
+            "durationSec": 245,
+            "cues": [
+              {
+                "id": "cue_02_1",
+                "order": 1,
+                "at": "intro",
+                "call": "Wide on downbeat",
+                "kind": "camera",
+                "status": null
+              },
+              {
+                "id": "cue_02_2",
+                "order": 2,
+                "at": "chorus 1",
+                "call": "Server to Look 2",
+                "kind": "server",
+                "status": null,
+                "action": {
+                  "type": "look",
+                  "ref": "Look 2"
+                }
+              }
+            ],
+            "cameraNotes": [
+              {
+                "id": "note_02_1",
+                "cameraId": "dev_cam1",
+                "shot": "wide, full stage from FOH",
+                "priority": "primary",
+                "authored": {
+                  "by": "videoDirector",
+                  "at": "2026-11-10T15:00:00Z",
+                  "during": "build"
+                },
+                "move": "static",
+                "timing": "whole song"
+              },
+              {
+                "id": "note_02_2",
+                "cameraId": "dev_cam1",
+                "shot": "wide, full stage from FOH",
+                "priority": "cover",
+                "authored": {
+                  "by": "videoDirector",
+                  "at": "2026-11-10T15:00:00Z",
+                  "during": "build"
+                },
+                "move": "static"
+              },
+              {
+                "id": "note_02_3",
+                "cameraId": "dev_cam5",
+                "shot": "keys / SR mid shot",
+                "priority": "cover",
+                "authored": {
+                  "by": "videoDirector",
+                  "at": "2026-11-10T15:00:00Z",
+                  "during": "build"
+                },
+                "move": "pan"
+              }
+            ],
+            "flags": [],
+            "lookRef": {
+              "serverId": "srv_a",
+              "lookName": "Look 2"
+            },
+            "wallState": [
+              {
+                "wallId": "wall_us",
+                "note": "live IMAG"
+              }
+            ],
+            "bpm": 128,
+            "key": "E"
+          },
+          {
+            "id": "song_03",
+            "order": 3,
+            "title": "Paper Satellites",
+            "tag": "uptempo",
+            "durationSec": 212,
+            "cues": [
+              {
+                "id": "cue_03_1",
+                "order": 1,
+                "at": "intro",
+                "call": "Wide on downbeat",
+                "kind": "camera",
+                "status": null
+              },
+              {
+                "id": "cue_03_2",
+                "order": 2,
+                "at": "chorus 1",
+                "call": "Server to Look 3",
+                "kind": "server",
+                "status": null,
+                "action": {
+                  "type": "look",
+                  "ref": "Look 3"
+                }
+              },
+              {
+                "id": "cue_03_3",
+                "order": 3,
+                "at": "bar 33",
+                "call": "Cut to drums",
+                "kind": "camera",
+                "status": null
+              }
+            ],
+            "cameraNotes": [
+              {
+                "id": "note_03_1",
+                "cameraId": "dev_cam3",
+                "shot": "guitar SL, hold through solos",
+                "priority": "primary",
+                "authored": {
+                  "by": "videoDirector",
+                  "at": "2026-11-10T15:00:00Z",
+                  "during": "build"
+                },
+                "move": "handheld",
+                "timing": "solos"
+              },
+              {
+                "id": "note_03_2",
+                "cameraId": "dev_cam1",
+                "shot": "wide, full stage from FOH",
+                "priority": "safety",
+                "authored": {
+                  "by": "videoDirector",
+                  "at": "2026-11-10T15:00:00Z",
+                  "during": "build"
+                },
+                "move": "static"
+              },
+              {
+                "id": "note_03_3",
+                "cameraId": "dev_cam5",
+                "shot": "keys / SR mid shot",
+                "priority": "cover",
+                "authored": {
+                  "by": "videoDirector",
+                  "at": "2026-11-10T15:00:00Z",
+                  "during": "build"
+                },
+                "move": "pan"
+              }
+            ],
+            "flags": [],
+            "lookRef": {
+              "serverId": "srv_a",
+              "lookName": "Look 3"
+            },
+            "wallState": [
+              {
+                "wallId": "wall_us",
+                "note": "live IMAG"
+              }
+            ],
+            "bpm": 140,
+            "key": "A"
+          },
+          {
+            "id": "song_04",
+            "order": 4,
+            "title": "Glasshouse",
+            "tag": "uptempo",
+            "durationSec": 231,
+            "cues": [
+              {
+                "id": "cue_04_1",
+                "order": 1,
+                "at": "intro",
+                "call": "Wide on downbeat",
+                "kind": "camera",
+                "status": null
+              },
+              {
+                "id": "cue_04_2",
+                "order": 2,
+                "at": "chorus 1",
+                "call": "Server to Look 4",
+                "kind": "server",
+                "status": null,
+                "action": {
+                  "type": "look",
+                  "ref": "Look 4"
+                }
+              },
+              {
+                "id": "cue_04_3",
+                "order": 3,
+                "at": "bar 33",
+                "call": "Cut to drums",
+                "kind": "camera",
+                "status": null
+              }
+            ],
+            "cameraNotes": [
+              {
+                "id": "note_04_1",
+                "cameraId": "dev_cam4",
+                "shot": "drums from US riser",
+                "priority": "primary",
+                "authored": {
+                  "by": "videoDirector",
+                  "at": "2026-11-10T15:00:00Z",
+                  "during": "build"
+                },
+                "move": "static",
+                "timing": "whole song"
+              },
+              {
+                "id": "note_04_2",
+                "cameraId": "dev_cam1",
+                "shot": "wide, full stage from FOH",
+                "priority": "safety",
+                "authored": {
+                  "by": "videoDirector",
+                  "at": "2026-11-10T15:00:00Z",
+                  "during": "build"
+                },
+                "move": "static"
+              },
+              {
+                "id": "note_04_3",
+                "cameraId": "dev_cam5",
+                "shot": "keys / SR mid shot",
+                "priority": "cover",
+                "authored": {
+                  "by": "videoDirector",
+                  "at": "2026-11-10T15:00:00Z",
+                  "during": "build"
+                },
+                "move": "pan"
+              }
+            ],
+            "flags": [],
+            "lookRef": {
+              "serverId": "srv_a",
+              "lookName": "Look 4"
+            },
+            "wallState": [
+              {
+                "wallId": "wall_us",
+                "note": "live IMAG"
+              }
+            ],
+            "bpm": 118,
+            "key": "D"
+          },
+          {
+            "id": "song_05",
+            "order": 5,
+            "title": "Slow Burn Avenue",
+            "tag": "ballad",
+            "durationSec": 298,
+            "cues": [
+              {
+                "id": "cue_05_1",
+                "order": 1,
+                "at": "intro",
+                "call": "Slow push on vocal",
+                "kind": "camera",
+                "status": null
+              },
+              {
+                "id": "cue_05_2",
+                "order": 2,
+                "at": "chorus 1",
+                "call": "Server to Look 5",
+                "kind": "server",
+                "status": null,
+                "action": {
+                  "type": "look",
+                  "ref": "Look 5"
+                }
+              }
+            ],
+            "cameraNotes": [
+              {
+                "id": "note_05_1",
+                "cameraId": "dev_cam2",
+                "shot": "tight on lead vocal",
+                "priority": "primary",
+                "authored": {
+                  "by": "videoDirector",
+                  "at": "2026-11-10T15:00:00Z",
+                  "during": "build"
+                },
+                "move": "push",
+                "timing": "verses"
+              },
+              {
+                "id": "note_05_2",
+                "cameraId": "dev_cam1",
+                "shot": "wide, full stage from FOH",
+                "priority": "safety",
+                "authored": {
+                  "by": "videoDirector",
+                  "at": "2026-11-10T15:00:00Z",
+                  "during": "build"
+                },
+                "move": "static"
+              },
+              {
+                "id": "note_05_3",
+                "cameraId": "dev_cam5",
+                "shot": "keys / SR mid shot",
+                "priority": "cover",
+                "authored": {
+                  "by": "videoDirector",
+                  "at": "2026-11-10T15:00:00Z",
+                  "during": "build"
+                },
+                "move": "pan"
+              }
+            ],
+            "flags": [],
+            "lookRef": {
+              "serverId": "srv_a",
+              "lookName": "Look 5"
+            },
+            "wallState": [
+              {
+                "wallId": "wall_us",
+                "note": "live IMAG"
+              }
+            ],
+            "bpm": 72,
+            "key": "C#m"
+          },
+          {
+            "id": "song_06",
+            "order": 6,
+            "title": "Copper & Coal",
+            "tag": "uptempo",
+            "durationSec": 204,
+            "cues": [
+              {
+                "id": "cue_06_1",
+                "order": 1,
+                "at": "intro",
+                "call": "Wide on downbeat",
+                "kind": "camera",
+                "status": null
+              },
+              {
+                "id": "cue_06_2",
+                "order": 2,
+                "at": "chorus 1",
+                "call": "Server to Look 6",
+                "kind": "server",
+                "status": null,
+                "action": {
+                  "type": "look",
+                  "ref": "Look 6"
+                }
+              },
+              {
+                "id": "cue_06_3",
+                "order": 3,
+                "at": "bar 33",
+                "call": "Cut to drums",
+                "kind": "camera",
+                "status": null
+              }
+            ],
+            "cameraNotes": [
+              {
+                "id": "note_06_1",
+                "cameraId": "dev_cam4",
+                "shot": "drums from US riser",
+                "priority": "primary",
+                "authored": {
+                  "by": "videoDirector",
+                  "at": "2026-11-10T15:00:00Z",
+                  "during": "build"
+                },
+                "move": "static",
+                "timing": "whole song"
+              },
+              {
+                "id": "note_06_2",
+                "cameraId": "dev_cam1",
+                "shot": "wide, full stage from FOH",
+                "priority": "safety",
+                "authored": {
+                  "by": "videoDirector",
+                  "at": "2026-11-10T15:00:00Z",
+                  "during": "build"
+                },
+                "move": "static"
+              },
+              {
+                "id": "note_06_3",
+                "cameraId": "dev_cam5",
+                "shot": "keys / SR mid shot",
+                "priority": "cover",
+                "authored": {
+                  "by": "videoDirector",
+                  "at": "2026-11-10T15:00:00Z",
+                  "during": "build"
+                },
+                "move": "pan"
+              }
+            ],
+            "flags": [],
+            "lookRef": {
+              "serverId": "srv_a",
+              "lookName": "Look 6"
+            },
+            "wallState": [
+              {
+                "wallId": "wall_us",
+                "note": "live IMAG"
+              }
+            ],
+            "bpm": 132,
+            "key": "G"
+          },
+          {
+            "id": "song_07",
+            "order": 7,
+            "title": "Interlude: Static",
+            "tag": "interstitial",
+            "durationSec": 75,
+            "cues": [
+              {
+                "id": "cue_07_1",
+                "order": 1,
+                "at": "intro",
+                "call": "Wide on downbeat",
+                "kind": "camera",
+                "status": null
+              },
+              {
+                "id": "cue_07_2",
+                "order": 2,
+                "at": "chorus 1",
+                "call": "Server to Look 7",
+                "kind": "server",
+                "status": null,
+                "action": {
+                  "type": "look",
+                  "ref": "Look 7"
+                }
+              }
+            ],
+            "cameraNotes": [
+              {
+                "id": "note_07_1",
+                "cameraId": "dev_cam1",
+                "shot": "wide house, hold for VT out",
+                "priority": "primary",
+                "authored": {
+                  "by": "videoDirector",
+                  "at": "2026-11-10T15:00:00Z",
+                  "during": "build"
+                },
+                "move": "static"
+              },
+              {
+                "id": "note_07_2",
+                "cameraId": "dev_cam6",
+                "shot": "crowd reaction",
+                "priority": "safety",
+                "authored": {
+                  "by": "videoDirector",
+                  "at": "2026-11-10T15:00:00Z",
+                  "during": "build"
+                }
+              }
+            ],
+            "flags": [],
+            "lookRef": {
+              "serverId": "srv_a",
+              "lookName": "Look 7"
+            },
+            "wallState": [
+              {
+                "wallId": "wall_us",
+                "note": "content"
+              }
+            ]
+          },
+          {
+            "id": "song_08",
+            "order": 8,
+            "title": "Little Hours",
+            "tag": "acoustic",
+            "durationSec": 189,
+            "cues": [
+              {
+                "id": "cue_08_1",
+                "order": 1,
+                "at": "intro",
+                "call": "Wide on downbeat",
+                "kind": "camera",
+                "status": null
+              },
+              {
+                "id": "cue_08_2",
+                "order": 2,
+                "at": "chorus 1",
+                "call": "Server to Look 8",
+                "kind": "server",
+                "status": null,
+                "action": {
+                  "type": "look",
+                  "ref": "Look 8"
+                }
+              }
+            ],
+            "cameraNotes": [
+              {
+                "id": "note_08_1",
+                "cameraId": "dev_cam2",
+                "shot": "tight on lead vocal",
+                "priority": "primary",
+                "authored": {
+                  "by": "videoDirector",
+                  "at": "2026-11-10T15:00:00Z",
+                  "during": "build"
+                },
+                "move": "push",
+                "timing": "verses"
+              },
+              {
+                "id": "note_08_2",
+                "cameraId": "dev_cam1",
+                "shot": "wide, full stage from FOH",
+                "priority": "safety",
+                "authored": {
+                  "by": "videoDirector",
+                  "at": "2026-11-10T15:00:00Z",
+                  "during": "build"
+                },
+                "move": "static"
+              },
+              {
+                "id": "note_08_3",
+                "cameraId": "dev_cam5",
+                "shot": "keys / SR mid shot",
+                "priority": "cover",
+                "authored": {
+                  "by": "videoDirector",
+                  "at": "2026-11-10T15:00:00Z",
+                  "during": "build"
+                },
+                "move": "pan"
+              }
+            ],
+            "flags": [],
+            "lookRef": {
+              "serverId": "srv_a",
+              "lookName": "Look 8"
+            },
+            "wallState": [
+              {
+                "wallId": "wall_us",
+                "note": "live IMAG"
+              }
+            ],
+            "bpm": 96,
+            "key": "F"
+          },
+          {
+            "id": "song_09",
+            "order": 9,
+            "title": "Harbor Song",
+            "tag": "acoustic",
+            "durationSec": 222,
+            "cues": [
+              {
+                "id": "cue_09_1",
+                "order": 1,
+                "at": "intro",
+                "call": "Wide on downbeat",
+                "kind": "camera",
+                "status": null
+              },
+              {
+                "id": "cue_09_2",
+                "order": 2,
+                "at": "chorus 1",
+                "call": "Server to Look 9",
+                "kind": "server",
+                "status": null,
+                "action": {
+                  "type": "look",
+                  "ref": "Look 9"
+                }
+              }
+            ],
+            "cameraNotes": [
+              {
+                "id": "note_09_1",
+                "cameraId": "dev_cam2",
+                "shot": "tight on lead vocal",
+                "priority": "primary",
+                "authored": {
+                  "by": "videoDirector",
+                  "at": "2026-11-10T15:00:00Z",
+                  "during": "build"
+                },
+                "move": "push",
+                "timing": "verses"
+              },
+              {
+                "id": "note_09_2",
+                "cameraId": "dev_cam1",
+                "shot": "wide, full stage from FOH",
+                "priority": "safety",
+                "authored": {
+                  "by": "videoDirector",
+                  "at": "2026-11-10T15:00:00Z",
+                  "during": "build"
+                },
+                "move": "static"
+              },
+              {
+                "id": "note_09_3",
+                "cameraId": "dev_cam5",
+                "shot": "keys / SR mid shot",
+                "priority": "cover",
+                "authored": {
+                  "by": "videoDirector",
+                  "at": "2026-11-10T15:00:00Z",
+                  "during": "build"
+                },
+                "move": "pan"
+              }
+            ],
+            "flags": [],
+            "lookRef": {
+              "serverId": "srv_a",
+              "lookName": "Look 9"
+            },
+            "wallState": [
+              {
+                "wallId": "wall_us",
+                "note": "live IMAG"
+              }
+            ],
+            "bpm": 88,
+            "key": "Bb"
+          },
+          {
+            "id": "song_10",
+            "order": 10,
+            "title": "Wildfire Season",
+            "tag": "uptempo",
+            "durationSec": 257,
+            "cues": [
+              {
+                "id": "cue_10_1",
+                "order": 1,
+                "at": "intro",
+                "call": "Wide on downbeat",
+                "kind": "camera",
+                "status": null
+              },
+              {
+                "id": "cue_10_2",
+                "order": 2,
+                "at": "chorus 1",
+                "call": "Server to Look 10",
+                "kind": "server",
+                "status": null,
+                "action": {
+                  "type": "look",
+                  "ref": "Look 10"
+                }
+              },
+              {
+                "id": "cue_10_3",
+                "order": 3,
+                "at": "bar 33",
+                "call": "Cut to drums",
+                "kind": "camera",
+                "status": null
+              }
+            ],
+            "cameraNotes": [
+              {
+                "id": "note_10_1",
+                "cameraId": "dev_cam4",
+                "shot": "drums from US riser",
+                "priority": "primary",
+                "authored": {
+                  "by": "videoDirector",
+                  "at": "2026-11-10T15:00:00Z",
+                  "during": "build"
+                },
+                "move": "static",
+                "timing": "whole song",
+                "warning": "pyro SL at 3:10 — stay off the apron"
+              },
+              {
+                "id": "note_10_2",
+                "cameraId": "dev_cam1",
+                "shot": "wide, full stage from FOH",
+                "priority": "safety",
+                "authored": {
+                  "by": "videoDirector",
+                  "at": "2026-11-10T15:00:00Z",
+                  "during": "build"
+                },
+                "move": "static"
+              },
+              {
+                "id": "note_10_3",
+                "cameraId": "dev_cam5",
+                "shot": "keys / SR mid shot",
+                "priority": "cover",
+                "authored": {
+                  "by": "videoDirector",
+                  "at": "2026-11-10T15:00:00Z",
+                  "during": "build"
+                },
+                "move": "pan"
+              }
+            ],
+            "flags": [
+              {
+                "kind": "pyro",
+                "at": "3:10",
+                "note": "SL gerbs"
+              }
+            ],
+            "lookRef": {
+              "serverId": "srv_a",
+              "lookName": "Look 10"
+            },
+            "wallState": [
+              {
+                "wallId": "wall_us",
+                "note": "live IMAG"
+              }
+            ],
+            "bpm": 150,
+            "key": "E"
+          },
+          {
+            "id": "song_11",
+            "order": 11,
+            "title": "Ghost Radio",
+            "tag": "ballad",
+            "durationSec": 276,
+            "cues": [
+              {
+                "id": "cue_11_1",
+                "order": 1,
+                "at": "intro",
+                "call": "Slow push on vocal",
+                "kind": "camera",
+                "status": null
+              },
+              {
+                "id": "cue_11_2",
+                "order": 2,
+                "at": "chorus 1",
+                "call": "Server to Look 11",
+                "kind": "server",
+                "status": null,
+                "action": {
+                  "type": "look",
+                  "ref": "Look 11"
+                }
+              }
+            ],
+            "cameraNotes": [
+              {
+                "id": "note_11_1",
+                "cameraId": "dev_cam2",
+                "shot": "tight on lead vocal",
+                "priority": "primary",
+                "authored": {
+                  "by": "videoDirector",
+                  "at": "2026-11-10T15:00:00Z",
+                  "during": "build"
+                },
+                "move": "push",
+                "timing": "verses"
+              },
+              {
+                "id": "note_11_2",
+                "cameraId": "dev_cam1",
+                "shot": "wide, full stage from FOH",
+                "priority": "safety",
+                "authored": {
+                  "by": "videoDirector",
+                  "at": "2026-11-10T15:00:00Z",
+                  "during": "build"
+                },
+                "move": "static"
+              },
+              {
+                "id": "note_11_3",
+                "cameraId": "dev_cam5",
+                "shot": "keys / SR mid shot",
+                "priority": "cover",
+                "authored": {
+                  "by": "videoDirector",
+                  "at": "2026-11-10T15:00:00Z",
+                  "during": "build"
+                },
+                "move": "pan"
+              }
+            ],
+            "flags": [],
+            "lookRef": {
+              "serverId": "srv_a",
+              "lookName": "Look 11"
+            },
+            "wallState": [
+              {
+                "wallId": "wall_us",
+                "note": "live IMAG"
+              }
+            ],
+            "bpm": 68,
+            "key": "Am"
+          },
+          {
+            "id": "song_12",
+            "order": 12,
+            "title": "Run The Lights",
+            "tag": "uptempo",
+            "durationSec": 240,
+            "cues": [
+              {
+                "id": "cue_12_1",
+                "order": 1,
+                "at": "intro",
+                "call": "Wide on downbeat",
+                "kind": "camera",
+                "status": null
+              },
+              {
+                "id": "cue_12_2",
+                "order": 2,
+                "at": "chorus 1",
+                "call": "Server to Look 12",
+                "kind": "server",
+                "status": null,
+                "action": {
+                  "type": "look",
+                  "ref": "Look 12"
+                }
+              },
+              {
+                "id": "cue_12_3",
+                "order": 3,
+                "at": "bar 33",
+                "call": "Cut to drums",
+                "kind": "camera",
+                "status": null
+              }
+            ],
+            "cameraNotes": [
+              {
+                "id": "note_12_1",
+                "cameraId": "dev_cam4",
+                "shot": "drums from US riser",
+                "priority": "primary",
+                "authored": {
+                  "by": "videoDirector",
+                  "at": "2026-11-10T15:00:00Z",
+                  "during": "build"
+                },
+                "move": "static",
+                "timing": "whole song"
+              },
+              {
+                "id": "note_12_2",
+                "cameraId": "dev_cam1",
+                "shot": "wide, full stage from FOH",
+                "priority": "safety",
+                "authored": {
+                  "by": "videoDirector",
+                  "at": "2026-11-10T15:00:00Z",
+                  "during": "build"
+                },
+                "move": "static"
+              },
+              {
+                "id": "note_12_3",
+                "cameraId": "dev_cam5",
+                "shot": "keys / SR mid shot",
+                "priority": "cover",
+                "authored": {
+                  "by": "videoDirector",
+                  "at": "2026-11-10T15:00:00Z",
+                  "during": "build"
+                },
+                "move": "pan"
+              }
+            ],
+            "flags": [
+              {
+                "kind": "strobe",
+                "at": "chorus",
+                "note": ""
+              }
+            ],
+            "lookRef": {
+              "serverId": "srv_a",
+              "lookName": "Look 12"
+            },
+            "wallState": [
+              {
+                "wallId": "wall_us",
+                "note": "live IMAG"
+              }
+            ],
+            "bpm": 136,
+            "key": "B"
+          },
+          {
+            "id": "song_13",
+            "order": 13,
+            "title": "Homecoming",
+            "tag": "encore",
+            "durationSec": 263,
+            "cues": [
+              {
+                "id": "cue_13_1",
+                "order": 1,
+                "at": "intro",
+                "call": "Wide on downbeat",
+                "kind": "camera",
+                "status": null
+              },
+              {
+                "id": "cue_13_2",
+                "order": 2,
+                "at": "chorus 1",
+                "call": "Server to Look 13",
+                "kind": "server",
+                "status": null,
+                "action": {
+                  "type": "look",
+                  "ref": "Look 13"
+                }
+              }
+            ],
+            "cameraNotes": [
+              {
+                "id": "note_13_1",
+                "cameraId": "dev_cam3",
+                "shot": "guitar SL, hold through solos",
+                "priority": "primary",
+                "authored": {
+                  "by": "videoDirector",
+                  "at": "2026-11-10T15:00:00Z",
+                  "during": "build"
+                },
+                "move": "handheld",
+                "timing": "solos"
+              },
+              {
+                "id": "note_13_2",
+                "cameraId": "dev_cam1",
+                "shot": "wide, full stage from FOH",
+                "priority": "safety",
+                "authored": {
+                  "by": "videoDirector",
+                  "at": "2026-11-10T15:00:00Z",
+                  "during": "build"
+                },
+                "move": "static"
+              },
+              {
+                "id": "note_13_3",
+                "cameraId": "dev_cam5",
+                "shot": "keys / SR mid shot",
+                "priority": "cover",
+                "authored": {
+                  "by": "videoDirector",
+                  "at": "2026-11-10T15:00:00Z",
+                  "during": "build"
+                },
+                "move": "pan"
+              }
+            ],
+            "flags": [
+              {
+                "kind": "confetti",
+                "at": "last chorus",
+                "note": "cannons US"
+              }
+            ],
+            "lookRef": {
+              "serverId": "srv_a",
+              "lookName": "Look 13"
+            },
+            "wallState": [
+              {
+                "wallId": "wall_us",
+                "note": "live IMAG"
+              }
+            ],
+            "bpm": 110,
+            "key": "D"
+          },
+          {
+            "id": "song_14",
+            "order": 14,
+            "title": "Last Train Out",
+            "tag": "encore",
+            "durationSec": 318,
+            "cues": [
+              {
+                "id": "cue_14_1",
+                "order": 1,
+                "at": "intro",
+                "call": "Wide on downbeat",
+                "kind": "camera",
+                "status": null
+              },
+              {
+                "id": "cue_14_2",
+                "order": 2,
+                "at": "last chord",
+                "call": "Stop record on REC-1",
+                "kind": "record",
+                "status": null,
+                "target": "dev_hd1",
+                "action": {
+                  "type": "record-stop",
+                  "ref": "dev_hd1"
+                }
+              }
+            ],
+            "cameraNotes": [
+              {
+                "id": "note_14_1",
+                "cameraId": "dev_cam4",
+                "shot": "drums from US riser",
+                "priority": "primary",
+                "authored": {
+                  "by": "videoDirector",
+                  "at": "2026-11-10T15:00:00Z",
+                  "during": "build"
+                },
+                "move": "static",
+                "timing": "whole song"
+              },
+              {
+                "id": "note_14_2",
+                "cameraId": "dev_cam1",
+                "shot": "wide, full stage from FOH",
+                "priority": "safety",
+                "authored": {
+                  "by": "videoDirector",
+                  "at": "2026-11-10T15:00:00Z",
+                  "during": "build"
+                },
+                "move": "static"
+              },
+              {
+                "id": "note_14_3",
+                "cameraId": "dev_cam5",
+                "shot": "keys / SR mid shot",
+                "priority": "cover",
+                "authored": {
+                  "by": "videoDirector",
+                  "at": "2026-11-10T15:00:00Z",
+                  "during": "build"
+                },
+                "move": "pan"
+              }
+            ],
+            "flags": [],
+            "lookRef": {
+              "serverId": "srv_a",
+              "lookName": "Look 14"
+            },
+            "wallState": [
+              {
+                "wallId": "wall_us",
+                "note": "live IMAG"
+              }
+            ],
+            "bpm": 124,
+            "key": "E"
+          }
+        ],
+        "setChanges": [
+          {
+            "afterSongId": "song_07",
+            "durationSec": 90,
+            "notes": "acoustic riser in, B-stage",
+            "cameraMoves": [
+              {
+                "cameraId": "dev_cam6",
+                "to": "B-stage pit"
+              }
+            ]
+          },
+          {
+            "afterSongId": "song_12",
+            "durationSec": 120,
+            "notes": "encore break",
+            "cameraMoves": []
+          }
+        ]
+      }
+    ],
+    "activeSetlistId": "sl_arena1",
+    "cameraRoster": [
+      {
+        "cameraId": "dev_cam1",
+        "operator": "cameraLead",
+        "position": "FOH riser",
+        "comms": "PL 1",
+        "active": true
+      },
+      {
+        "cameraId": "dev_cam2",
+        "operator": "con_camop2",
+        "position": "FOH riser",
+        "comms": "PL 1",
+        "active": true
+      },
+      {
+        "cameraId": "dev_cam3",
+        "operator": "con_camop3",
+        "position": "SL handheld",
+        "comms": "PL 1",
+        "active": true
+      },
+      {
+        "cameraId": "dev_cam4",
+        "operator": "con_camop4",
+        "position": "US riser",
+        "comms": "PL 2",
+        "active": true
+      },
+      {
+        "cameraId": "dev_cam5",
+        "operator": "con_camop5",
+        "position": "SR mid",
+        "comms": "PL 2",
+        "active": true
+      },
+      {
+        "cameraId": "dev_cam6",
+        "operator": "con_camop6",
+        "position": "Pit handheld",
+        "comms": "PL 2",
+        "active": true
+      }
+    ],
+    "runLog": [],
+    "unbound": [],
+    "unfrozen": null
+  }
+}

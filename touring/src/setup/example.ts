@@ -1,5 +1,6 @@
 // The shipped example show and venue memory (Venue advance tab).
 import fixture from "../fixtures/example-arena.json";
+import setlistFixture from "../fixtures/setlist-arena.json";
 import { slug, type Workspace } from "../store/store";
 import type { Patch, ShowRecord } from "../store/types";
 
@@ -9,6 +10,16 @@ export const EXAMPLE_SHOW_ID = (fixture as { showId: string }).showId;
 export function loadExample(ws: Workspace): ShowRecord {
   if (ws.has(EXAMPLE_SHOW_ID)) return ws.get(EXAMPLE_SHOW_ID);
   const raw = structuredClone(fixture) as unknown as ShowRecord;
+  raw.meta = { ...raw.meta, source: "example" };
+  return ws.importRecord(raw, { keepId: true });
+}
+
+export const SETLIST_EXAMPLE_ID = (setlistFixture as { showId: string }).showId;
+
+/** The show-day example: 14 songs, 6 cameras, 2 servers (Cues & camera notes tab). Read-only like the arena example. */
+export function loadSetlistExample(ws: Workspace): ShowRecord {
+  if (ws.has(SETLIST_EXAMPLE_ID)) return ws.get(SETLIST_EXAMPLE_ID);
+  const raw = structuredClone(setlistFixture) as unknown as ShowRecord;
   raw.meta = { ...raw.meta, source: "example" };
   return ws.importRecord(raw, { keepId: true });
 }

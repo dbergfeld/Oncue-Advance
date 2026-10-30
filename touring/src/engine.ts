@@ -1,10 +1,11 @@
-// The Engine the store runs on: the five registered modules, the device library, profiles, and store-level
+// The Engine the store runs on: the six registered modules, the device library, profiles, and store-level
 // task / readiness / binder evaluation.
 import { LIBRARY, library } from "./library/library";
 import { binderModule } from "./modules/binder";
 import { ledModule } from "./modules/led";
 import { rackModule } from "./modules/rack";
 import { serversModule } from "./modules/servers";
+import { showModule } from "./modules/show-book/index";
 import { signalModule } from "./modules/signal/index";
 import { profileFor } from "./store/profiles";
 import { binderSummary, readiness } from "./store/readiness";
@@ -12,7 +13,7 @@ import { Workspace, type Engine, type Persist } from "./store/store";
 import { deriveTasks } from "./store/tasks";
 
 export const engine: Engine = {
-  modules: [ledModule, signalModule, rackModule, serversModule, binderModule],
+  modules: [ledModule, signalModule, rackModule, serversModule, binderModule, showModule],
   library,
   libraryVersion: LIBRARY.libraryVersion,
   profileFor,

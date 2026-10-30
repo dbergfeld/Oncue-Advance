@@ -5,6 +5,7 @@ import { addRack, autoRack } from "../modules/rack";
 import { addServerPair, assignOutputs, syncContentSpecs } from "../modules/servers";
 import { addSignalDevice, autoPatchProgram, connect } from "../modules/signal/helpers";
 import { seedPhysical } from "../modules/signal/physical";
+import { syncRoster } from "../modules/show-book/helpers";
 import { newId } from "../store/ids";
 import { profileFor, profilePhase, scheduleTemplate } from "../store/profiles";
 import { firstIncompleteStep, readiness, setupCompleted } from "../store/readiness";
@@ -83,7 +84,7 @@ export function effectiveProfile(type: EventType, o: Step2 = {}): SystemProfile 
   };
 }
 
-const SEED_ORDER: ModuleId[] = ["led", "rack", "servers", "signal", "binder"];
+const SEED_ORDER: ModuleId[] = ["led", "rack", "servers", "signal", "binder", "show"];
 const LANE_ORDER: Lane[] = ["advance", "led", "crew", "servers", "signal", "rack", "prep"];
 const LANE_WRITER: Record<Lane, WriterId> = { advance: "shell", crew: "shell", prep: "shell", led: "led", signal: "signal", servers: "servers", rack: "rack" };
 
@@ -171,6 +172,8 @@ export function applyProfile(ws: Workspace, showId: string, o: Step2 = {}): Syst
     camOps.push({ op: "add", path: "/devices/-", value: { id: newId("dev"), class: "camera", make: "", model: "TBD", label: `CAM ${n}`, qty: 1, rackId: null, ru: 0, powerW: 0, weightLb: 0, ports: [], inventoryRef: {} } satisfies Device });
   }
   apply(ws, showId, "signal", camOps, "profile");
+  // Show Book roster sees the cameras just placed (its seed ran before them; syncRoster is idempotent).
+  if (ws.engine.modules.some((m) => m.id === "show")) apply(ws, showId, "show", syncRoster(ws.get(showId)), "profile");
 
   // Record: one recorder for program when the profile records.
   r = ws.get(showId);

@@ -3,7 +3,7 @@ import { profileFor, sectionVisible } from "./profiles";
 import { isSet } from "./tasks";
 import type { BinderSectionKey, Derived, Severity, ShowRecord } from "./types";
 
-export const BINDER_KEYS: BinderSectionKey[] = ["front-view", "rigging", "video-system", "led", "cameras", "network", "foh", "power", "schedule", "contacts", "notes"];
+export const BINDER_KEYS: BinderSectionKey[] = ["front-view", "rigging", "video-system", "led", "cameras", "network", "foh", "power", "schedule", "contacts", "notes", "show-book"];
 
 const has = (r: ShowRecord, re: RegExp, key?: string[]) => r.binder.schedule.some((s) => (key && s.key && key.includes(s.key)) || re.test(s.item));
 
@@ -108,6 +108,12 @@ export function sectionCompleteness(r: ShowRecord, key: BinderSectionKey): numbe
     case "notes": {
       const sec = r.binder.sections.find((s) => s.key === "notes");
       return sec?.blocks.some((b) => b.type !== "auto" && b.body.trim()) || r.binder.annotations.length > 0 ? 100 : 0;
+    }
+    case "show-book": {
+      const sl = r.show?.setlists.find((s) => s.id === r.show.activeSetlistId);
+      const songs = sl?.songs ?? [];
+      const active = new Set((r.show?.cameraRoster ?? []).filter((c) => c.active).map((c) => c.cameraId));
+      return pct([songs.length > 0, active.size > 0, songs.length > 0 && songs.every((s) => s.cameraNotes.some((n) => n.priority === "primary" && active.has(n.cameraId)))]);
     }
   }
 }

@@ -27,6 +27,14 @@ function parseDur(t: string): number | undefined {
   return m ? Number(m[1]) * 60 + Number(m[2]) : t.trim() ? Number(t) || undefined : undefined;
 }
 
+/** An operator is a crew role key or a contact id; show the person's name either way. */
+function operatorName(r: ShowRecord, op: string): string {
+  if (!op) return "";
+  const role = (r.crew as unknown as Record<string, string | undefined>)[op];
+  if (role !== undefined) return role || op;
+  return r.binder.contacts.find((c) => c.id === op)?.name ?? op;
+}
+
 /** Lock state for the show slice: run actions keep working after lockShow; structure needs Unfreeze. */
 function gates(r: ShowRecord) {
   const readOnly = r.meta.source === "example" || r.meta.source === "template" || r.meta.status === "archived";
@@ -116,12 +124,20 @@ function Build({ r }: { r: ShowRecord }) {
         {cams.length === 0 ? <Empty>No camera devices on this show. Add cameras in Signal Flow; they appear here as columns.</Empty> : (
           <div className="scroll-x">
             <table className="tbl text-[13px]">
-              <thead><tr><th>Camera</th><th>Operated</th><th>Operator (role or name)</th><th>Position</th><th>Comms</th></tr></thead>
+              <thead><tr><th>Camera</th><th>Operated</th><th>Operator (crew role or contact)</th><th>Position</th><th>Comms</th></tr></thead>
               <tbody>{cams.map(({ slot, device }) => (
                 <tr key={slot.cameraId}>
                   <td className="font-mono">{device?.label ?? "removed"}</td>
                   <td><input type="checkbox" aria-label="Operated" disabled={g.readOnly} checked={slot.active} onChange={(e) => show((rec) => setRosterSlot(rec, slot.cameraId, { active: e.target.checked }), "show: roster")} /></td>
-                  {(["operator", "position", "comms"] as const).map((k) => (
+                  <td>
+                    <select className="inp" aria-label="Operator" disabled={g.readOnly} value={slot.operator} onChange={(e) => show((rec) => setRosterSlot(rec, slot.cameraId, { operator: e.target.value }), "show: roster operator")}>
+                      <option value="">— none —</option>
+                      <optgroup label="Crew roles">{["cameraLead", "videoDirector", "crewChief", "eic", "ledLead", "serverOp"].map((k) => <option key={k} value={k}>{k}{(r.crew as unknown as Record<string, string>)[k] ? ` · ${(r.crew as unknown as Record<string, string>)[k]}` : ""}</option>)}</optgroup>
+                      <optgroup label="Contacts">{r.binder.contacts.map((c) => <option key={c.id} value={c.id}>{c.name}{c.role ? ` · ${c.role}` : ""}</option>)}</optgroup>
+                      {slot.operator && !(slot.operator in r.crew) && !r.binder.contacts.some((c) => c.id === slot.operator) && <option value={slot.operator}>{slot.operator}</option>}
+                    </select>
+                  </td>
+                  {(["position", "comms"] as const).map((k) => (
                     <td key={k}><Edit value={slot[k]} disabled={g.readOnly} onCommit={(v) => show((rec) => setRosterSlot(rec, slot.cameraId, { [k]: v }), `show: roster ${k}`)} /></td>
                   ))}
                 </tr>
@@ -143,7 +159,7 @@ function Build({ r }: { r: ShowRecord }) {
         {!sl || sl.songs.length === 0 ? <Empty>No songs yet. Import the setlist from management: paste one title per line, with an optional "— 3:45" duration.</Empty> : (
           <div className="scroll-x">
             <table className="tbl text-[13px]">
-              <thead><tr><th>#</th><th>Song</th><th>Cues</th>{active.map((c) => <th key={c.slot.cameraId}>{c.device?.label}<div className="normal-case font-body tracking-normal text-[11px]">{c.slot.operator || "no operator"}</div></th>)}</tr></thead>
+              <thead><tr><th>#</th><th>Song</th><th>Cues</th>{active.map((c) => <th key={c.slot.cameraId}>{c.device?.label}<div className="normal-case font-body tracking-normal text-[11px]">{operatorName(r, c.slot.operator) || "no operator"}</div></th>)}</tr></thead>
               <tbody>
                 {sl.songs.slice().sort((a, b) => a.order - b.order).map((s) => (
                   <tr key={s.id} className={`${s.skipped ? "opacity-50" : ""} ${songSel === s.id ? "bg-accent/5" : ""}`}>
@@ -452,7 +468,7 @@ function Director({ r }: { r: ShowRecord }) {
           return (
             <button key={c.slot.cameraId} disabled={!can || !cur} onClick={() => { setInput({ kind: "note", cam: i }); setText(p?.shot ?? ""); }} className="text-left border border-line rounded-sm p-2 bg-raised min-w-0">
               <div className="flex justify-between"><span className="font-display text-lg">{c.device?.label}</span><span className="font-mono text-dim text-xs">{i + 1}</span></div>
-              <div className="text-xs text-dim truncate">{c.slot.operator || "no operator"}</div>
+              <div className="text-xs text-dim truncate">{operatorName(r, c.slot.operator) || "no operator"}</div>
               <div className={`text-[13px] mt-1 ${p ? "" : "text-warn"}`}>{p?.shot ?? "no note"}</div>
               {notes.some((n) => n.pending) && <div className="text-xs text-accent">⚑ operator note</div>}
             </button>
@@ -491,7 +507,7 @@ function Operator({ r }: { r: ShowRecord }) {
   return (
     <div className="stage rounded-sm border border-line p-4 max-w-md grid gap-3">
       <div className="flex gap-2">
-        <select aria-label="Camera" className="inp flex-1" value={cam} onChange={(e) => setCam(e.target.value)}>{cams.map((c) => <option key={c.slot.cameraId} value={c.slot.cameraId}>{c.device?.label} · {c.slot.operator || "no operator"}</option>)}</select>
+        <select aria-label="Camera" className="inp flex-1" value={cam} onChange={(e) => setCam(e.target.value)}>{cams.map((c) => <option key={c.slot.cameraId} value={c.slot.cameraId}>{c.device?.label} · {operatorName(r, c.slot.operator) || "no operator"}</option>)}</select>
         <select aria-label="Run" className="inp" value={run} onChange={(e) => setRun(e.target.value as RunId)}>{RUNS.map((x) => <option key={x}>{x}</option>)}</select>
       </div>
       <div className="flex justify-between items-baseline"><span className="font-display text-4xl font-bold">{slot?.device?.label}</span><span className="text-dim">{slot?.slot.position}</span></div>
@@ -507,7 +523,7 @@ function Operator({ r }: { r: ShowRecord }) {
       ))}
       {mine(cur).length === 0 && <div className="text-warn text-xl">No note for this song.</div>}
       {next && <div className="border-t border-line pt-2"><div className="label">Next · {next.title}</div><div className="text-[15px]">{mine(next)[0]?.shot ?? "no note"}</div></div>}
-      <form className="flex gap-2" onSubmit={(e) => { e.preventDefault(); if (cur && flagText.trim() && mobile((rec) => operatorFlagNote(rec, cur.id, cam, flagText, slot?.slot.operator || slot?.device?.label || "operator", newId), "⚑ sent to director")) setFlagText(""); }}>
+      <form className="flex gap-2" onSubmit={(e) => { e.preventDefault(); if (cur && flagText.trim() && mobile((rec) => operatorFlagNote(rec, cur.id, cam, flagText, operatorName(r, slot?.slot.operator ?? "") || slot?.device?.label || "operator", newId), "⚑ sent to director")) setFlagText(""); }}>
         <input id="op-flag" className="inp flex-1" placeholder="⚑ Can't see drums from here on this one" value={flagText} onChange={(e) => setFlagText(e.target.value)} disabled={r.meta.source === "example" || r.meta.status === "archived"} />
         <button className="btn btn-primary" type="submit">⚑</button>
       </form>

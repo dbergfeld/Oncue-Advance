@@ -110,6 +110,7 @@ function WallDetail({ r, wall, frozen, layer, setLayer, tiles }: { r: ShowRecord
         {(["data", "power"] as const).map((l) => <button key={l} role="tab" aria-selected={layer === l} className={`btn ${layer === l ? "border-accent text-accent" : ""}`} onClick={() => setLayer(l)}>{l === "data" ? "Data runs" : "Circuits"}</button>)}
       </div>
       <TileMap wall={wall} layer={layer} r={r} />
+      <WallStates r={r} wallId={wall.id} />
     </Panel>
   );
 }
@@ -146,6 +147,19 @@ function TileMap({ wall, layer, r }: { wall: Wall; layer: "data" | "power"; r: S
         })}
         {(layer === "data" ? wall.dataRuns : wall.power.circuits).length === 0 && <li className="text-dim">None yet — use {layer === "data" ? "Split data runs" : "Assign circuits"}.</li>}
       </ul>
+    </div>
+  );
+}
+
+/** Per-song wall state from the Show Book, so a wall sent to black is readable here too. */
+function WallStates({ r, wallId }: { r: ShowRecord; wallId: string }) {
+  const sl = r.show.setlists.find((x) => x.id === r.show.activeSetlistId);
+  const rows = (sl?.songs ?? []).map((s) => ({ s, w: s.wallState?.find((x) => x.wallId === wallId) })).filter((x) => x.w).sort((a, b) => a.s.order - b.s.order);
+  if (!rows.length) return null;
+  return (
+    <div className="mt-3">
+      <div className="label mb-1">Show Book · wall state by song</div>
+      <ul className="text-xs grid gap-0.5 sm:grid-cols-2 lg:grid-cols-3">{rows.map(({ s, w }) => <li key={s.id}><span className="font-mono text-dim mr-1">{s.order}</span>{s.title}: <b>{w!.note}</b></li>)}</ul>
     </div>
   );
 }

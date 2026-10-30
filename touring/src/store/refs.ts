@@ -31,6 +31,14 @@ export function entityIndex(r: ShowRecord): Map<string, string> {
   r.tasks.forEach((t) => put(t.id, `/tasks/${t.id}`));
   r.physical.positions.forEach((p) => put(p.id, `/physical/positions/${p.id}`));
   r.physical.paths.forEach((p) => put(p.id, `/physical/paths/${p.id}`));
+  for (const sl of r.show?.setlists ?? []) {
+    put(sl.id, `/show/setlists/${sl.id}`);
+    for (const s of sl.songs) {
+      put(s.id, `/show/setlists/${sl.id}/songs/${s.id}`);
+      s.cues.forEach((c) => put(c.id, `/show/setlists/${sl.id}/songs/${s.id}/cues/${c.id}`));
+      s.cameraNotes.forEach((n) => put(n.id, `/show/setlists/${sl.id}/songs/${s.id}/cameraNotes/${n.id}`));
+    }
+  }
   return m;
 }
 
@@ -81,6 +89,17 @@ export function refSites(r: ShowRecord): RefSite[] {
   }
   r.servers.content.contentSpecs.forEach((c, i) => one(`/servers/content/contentSpecs/${i}/wallId`, c.wallId, ["wall"], false, "servers"));
   for (const t of r.tasks) many(`/tasks/${t.id}/blockedBy`, t.blockedBy, ["task"], "tasks");
+  // Show Book. Roster slots and camera notes drop with their camera on cascade (the store parks dropped notes in
+  // show.unbound so SHW-001 warns); a look on a removed server nulls; a wall state on a removed wall drops.
+  // cue.target and cue.action.ref are soft (any entity, or free text) — SHW-005 reports dangling action refs.
+  const item = (path: string, value: string | undefined, expect: string[]) => { if (value) out.push({ path, value, expect, nullable: false, arrayItem: true, owner: "show" }); };
+  (r.show?.cameraRoster ?? []).forEach((s, i) => item(`/show/cameraRoster/${i}`, s.cameraId, ["dev"]));
+  for (const sl of r.show?.setlists ?? []) for (const s of sl.songs) {
+    const base = `/show/setlists/${sl.id}/songs/${s.id}`;
+    s.cameraNotes.forEach((n) => item(`${base}/cameraNotes/${n.id}`, n.cameraId, ["dev"]));
+    one(`${base}/lookRef/serverId`, s.lookRef?.serverId, ["srv"], true, "show");
+    (s.wallState ?? []).forEach((w, i) => item(`${base}/wallState/${i}`, w.wallId, ["wall"]));
+  }
   return out;
 }
 

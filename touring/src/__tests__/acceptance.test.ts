@@ -104,7 +104,7 @@ describe("wizard: blank arena show through all six steps", () => {
     expect(r.servers.hosts.map((h) => h.role).sort()).toEqual(["backup", "master"]);
     expect(r.devices.filter((d) => d.class === "camera")).toHaveLength(6);
     expect(r.signal.network.vlans.map((v) => v.id)).toEqual([10, 20, 30]);
-    expect(r.binder.sections).toHaveLength(11);
+    expect(r.binder.sections).toHaveLength(12);
     expect(r.binder.sections.filter((s) => s.required).map((s) => s.key)).toEqual(["front-view", "video-system", "led", "power", "schedule", "contacts"]);
     expect(r.tasks.filter((t) => t.source === "setup").map((t) => t.key)).toContain("P1");
     const writers = new Set(r.meta.changelog.filter((c) => c.reason === "setup:profile").map((c) => c.by));
