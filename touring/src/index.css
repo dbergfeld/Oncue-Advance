@@ -1,0 +1,40 @@
+/* Layout: app frame — show bar on top, module rail on the left, one working surface. Road-case stencil type, fibre-aqua accent. */
+:root {
+  --bg: 244 245 243; --raised: 255 255 255; --panel: 236 238 235; --line: 210 214 209;
+  --ink: 24 28 27; --dim: 96 104 101; --accent: 0 128 138;
+  --block: 196 44 38; --warn: 178 112 0; --info: 62 96 160; --ok: 34 132 74;
+  --font-display: "Barlow Condensed", "Arial Narrow", sans-serif;
+  --font-body: "IBM Plex Sans", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: 17 20 20; --raised: 25 29 29; --panel: 32 37 37; --line: 50 57 57;
+  --ink: 228 232 230; --dim: 146 156 153; --accent: 52 196 206;
+  --block: 240 96 86; --warn: 232 170 60; --info: 132 164 230; --ok: 88 196 128; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: 17 20 20; --raised: 25 29 29; --panel: 32 37 37; --line: 50 57 57;
+  --ink: 228 232 230; --dim: 146 156 153; --accent: 52 196 206;
+  --block: 240 96 86; --warn: 232 170 60; --info: 132 164 230; --ok: 88 196 128; color-scheme: dark }
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body, #root { height: 100%; }
+body { background: rgb(var(--bg)); color: rgb(var(--ink)); font-family: var(--font-body); font-size: 14px; margin: 0; }
+.font-display { font-family: var(--font-display); letter-spacing: 0.02em; }
+.font-mono, code, .tnum { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+.label { font-family: var(--font-display); text-transform: uppercase; letter-spacing: 0.08em; font-size: 12px; color: rgb(var(--dim)); font-weight: 600; }
+h1, h2, h3 { text-wrap: balance; }
+:focus-visible { outline: 2px solid rgb(var(--accent)); outline-offset: 1px; }
+.inp { background: rgb(var(--raised)); border: 1px solid rgb(var(--line)); border-radius: 3px; padding: 4px 7px; min-width: 0; color: rgb(var(--ink)); }
+.inp:disabled { opacity: .6; }
+.btn { border: 1px solid rgb(var(--line)); background: rgb(var(--raised)); border-radius: 3px; padding: 4px 10px; font-weight: 500; white-space: nowrap; }
+.btn:hover:not(:disabled) { border-color: rgb(var(--accent)); }
+.btn:disabled { opacity: .45; cursor: not-allowed; }
+.btn-primary { background: rgb(var(--accent)); border-color: rgb(var(--accent)); color: rgb(var(--raised)); }
+.tbl { border-collapse: collapse; width: 100%; }
+.tbl th { text-align: left; font-family: var(--font-display); text-transform: uppercase; letter-spacing: .06em; font-size: 12px; color: rgb(var(--dim)); font-weight: 600; padding: 4px 8px; border-bottom: 1px solid rgb(var(--line)); }
+.tbl td { padding: 5px 8px; border-bottom: 1px solid rgb(var(--line) / .6); vertical-align: top; }
+.scroll-x { overflow-x: auto; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }

@@ -1,0 +1,420 @@
+{
+  "showId": "7c2e5a10-4f3b-4d8e-9a61-2b0c7e1f9d44",
+  "showCode": "EX-2026-001",
+  "tourId": null,
+  "name": "Example Arena \u00b7 Single Wall + IMAG",
+  "client": {
+    "artist": "Example Artist",
+    "management": "",
+    "productionCo": ""
+  },
+  "event": {
+    "type": "arena",
+    "dates": [
+      "2026-11-14"
+    ],
+    "venueId": "",
+    "venueName": "Example Arena",
+    "city": "Nashville",
+    "state": "TN",
+    "room": "Main Bowl"
+  },
+  "vendor": {
+    "company": "Fuse Operations",
+    "orderRef": "000000",
+    "orderSystem": "RentalWorks"
+  },
+  "crew": {
+    "videoDirector": "",
+    "crewChief": "",
+    "eic": "",
+    "ledLead": "",
+    "cameraLead": "",
+    "serverOp": ""
+  },
+  "meta": {
+    "status": "draft",
+    "revision": 1,
+    "schemaVersion": "1.0.0",
+    "source": "example",
+    "createdAt": "2026-10-30T08:00:00Z",
+    "updatedAt": "2026-10-30T08:00:00Z",
+    "updatedBy": "shell",
+    "changelog": []
+  },
+  "devices": [
+    {
+      "id": "dev_proc1",
+      "class": "processor",
+      "make": "Brompton",
+      "model": "SX40",
+      "label": "PROC-1",
+      "qty": 1,
+      "rackId": "rack_v1",
+      "ru": 2,
+      "powerW": 450,
+      "weightLb": 22,
+      "ports": [
+        {
+          "id": "p_proc1_in1",
+          "name": "HDMI IN 1",
+          "type": "HDMI2.0",
+          "dir": "in"
+        },
+        {
+          "id": "p_proc1_out1",
+          "name": "10G OUT 1",
+          "type": "fiberLED",
+          "dir": "out"
+        }
+      ],
+      "inventoryRef": {
+        "system": "RentalWorks",
+        "iCode": "",
+        "barcode": ""
+      }
+    },
+    {
+      "id": "dev_dist1",
+      "class": "distro",
+      "make": "Motion Labs",
+      "model": "200A 3\u00d8",
+      "label": "LED DISTRO 1",
+      "qty": 1,
+      "rackId": null,
+      "ru": 0,
+      "powerW": 0,
+      "weightLb": 180,
+      "ports": [],
+      "inventoryRef": {}
+    },
+    {
+      "id": "dev_sw1",
+      "class": "switcher",
+      "make": "Ross",
+      "model": "Carbonite Ultra",
+      "label": "SW-1",
+      "qty": 1,
+      "rackId": "rack_v1",
+      "ru": 3,
+      "powerW": 300,
+      "weightLb": 30,
+      "ports": [
+        {
+          "id": "p_sw1_pgm",
+          "name": "PGM OUT",
+          "type": "3G-SDI",
+          "dir": "out"
+        }
+      ],
+      "inventoryRef": {}
+    },
+    {
+      "id": "dev_srvA",
+      "class": "server",
+      "make": "disguise",
+      "model": "vx 2",
+      "label": "SRV-A",
+      "qty": 1,
+      "rackId": "rack_v1",
+      "ru": 4,
+      "powerW": 800,
+      "weightLb": 45,
+      "ports": [
+        {
+          "id": "p_srvA_out1",
+          "name": "DP OUT 1",
+          "type": "DP1.4",
+          "dir": "out"
+        },
+        {
+          "id": "p_srvA_in1",
+          "name": "SDI IN 1",
+          "type": "3G-SDI",
+          "dir": "in"
+        }
+      ],
+      "inventoryRef": {}
+    },
+    {
+      "id": "dev_srvB",
+      "class": "server",
+      "make": "disguise",
+      "model": "vx 2",
+      "label": "SRV-B",
+      "qty": 1,
+      "rackId": "rack_v1",
+      "ru": 4,
+      "powerW": 800,
+      "weightLb": 45,
+      "ports": [
+        {
+          "id": "p_srvB_out1",
+          "name": "DP OUT 1",
+          "type": "DP1.4",
+          "dir": "out"
+        }
+      ],
+      "inventoryRef": {}
+    },
+    {
+      "id": "dev_pdu1",
+      "class": "rackPdu",
+      "make": "SurgeX",
+      "model": "SX-1120-RT",
+      "label": "PDU-1",
+      "qty": 1,
+      "rackId": "rack_v1",
+      "ru": 1,
+      "powerW": 0,
+      "weightLb": 8,
+      "ports": [],
+      "inventoryRef": {}
+    }
+  ],
+  "cables": [
+    {
+      "id": "cab_pgm_srvA",
+      "type": "SDI",
+      "length_ft": 10,
+      "fromPort": "p_sw1_pgm",
+      "toPort": "p_srvA_in1",
+      "label": "PGM \u2192 SRV-A",
+      "redundancyGroup": null
+    },
+    {
+      "id": "cab_srvA_proc1",
+      "type": "SDI",
+      "length_ft": 6,
+      "fromPort": "p_srvA_out1",
+      "toPort": "p_proc1_in1",
+      "label": "SRV-A \u2192 PROC-1",
+      "redundancyGroup": "A"
+    },
+    {
+      "id": "cab_proc1_wall",
+      "type": "fiberLED",
+      "length_ft": 150,
+      "fromPort": "p_proc1_out1",
+      "toPort": null,
+      "label": "PROC-1 \u2192 US Wall",
+      "redundancyGroup": "A"
+    }
+  ],
+  "led": {
+    "walls": [
+      {
+        "id": "wall_us",
+        "name": "US Wall",
+        "tileModel": "ROE CB5",
+        "cols": 25,
+        "rows": 7,
+        "tileW_mm": 500,
+        "tileH_mm": 500,
+        "pitch_mm": 5.77,
+        "trimHeight_ft": 38,
+        "rigging": {
+          "type": "flown",
+          "headers": 5,
+          "points": []
+        },
+        "processorIds": [
+          "dev_proc1"
+        ],
+        "dataRuns": [
+          {
+            "portId": "p_proc1_out1",
+            "tileChain": [],
+            "redundant": false
+          }
+        ],
+        "power": {
+          "phase": "3\u00d8",
+          "circuits": [
+            {
+              "id": "ckt_us_a1",
+              "amps": 20,
+              "tiles": []
+            }
+          ],
+          "distroId": "dev_dist1"
+        }
+      }
+    ],
+    "canvas": {
+      "w_px": 2400,
+      "h_px": 672,
+      "mappings": [
+        {
+          "wallId": "wall_us",
+          "x": 0,
+          "y": 0
+        }
+      ]
+    }
+  },
+  "signal": {
+    "nodes": [
+      {
+        "id": "sig_sw1",
+        "deviceId": "dev_sw1",
+        "role": "switcher",
+        "x": 100,
+        "y": 200
+      },
+      {
+        "id": "sig_srvA",
+        "deviceId": "dev_srvA",
+        "role": "source",
+        "x": 300,
+        "y": 200
+      },
+      {
+        "id": "sig_proc1",
+        "deviceId": "dev_proc1",
+        "role": "processor",
+        "x": 500,
+        "y": 200
+      }
+    ],
+    "links": [
+      {
+        "id": "lnk_pgm",
+        "cableId": "cab_pgm_srvA",
+        "format": "1080p59.94",
+        "path": "A",
+        "label": "PGM"
+      },
+      {
+        "id": "lnk_srv_proc",
+        "cableId": "cab_srvA_proc1",
+        "format": "3840x2160p59.94",
+        "path": "A",
+        "label": "LED FEED"
+      }
+    ],
+    "formats": {
+      "house": "1080p59.94",
+      "ledInput": "3840x2160p59.94",
+      "record": "1080p59.94"
+    },
+    "redundancy": [],
+    "network": {
+      "vlans": [
+        {
+          "id": 10,
+          "name": "Control",
+          "subnet": "10.10.0.0/24"
+        }
+      ],
+      "hosts": [
+        {
+          "deviceId": "dev_proc1",
+          "vlan": 10,
+          "ip": "10.10.0.21"
+        }
+      ]
+    }
+  },
+  "racks": [
+    {
+      "id": "rack_v1",
+      "name": "VIDEO 1",
+      "ruTotal": 24,
+      "caseModel": "",
+      "location": "video world",
+      "slots": [
+        {
+          "ru": 1,
+          "deviceId": "dev_pdu1"
+        },
+        {
+          "ru": 3,
+          "deviceId": "dev_proc1"
+        },
+        {
+          "ru": 6,
+          "deviceId": "dev_sw1"
+        },
+        {
+          "ru": 10,
+          "deviceId": "dev_srvA"
+        },
+        {
+          "ru": 15,
+          "deviceId": "dev_srvB"
+        }
+      ],
+      "power": {
+        "inlet": "L21-30",
+        "pduIds": [
+          "dev_pdu1"
+        ],
+        "circuitIds": []
+      }
+    }
+  ],
+  "servers": {
+    "hosts": [
+      {
+        "id": "srv_a",
+        "deviceId": "dev_srvA",
+        "platform": "disguise",
+        "role": "master",
+        "outputs": [
+          {
+            "portId": "p_srvA_out1",
+            "resolution": "3840x2160",
+            "refresh": 59.94,
+            "feedsWallId": "wall_us"
+          }
+        ],
+        "inputs": [
+          {
+            "portId": "p_srvA_in1",
+            "source": "PGM"
+          }
+        ],
+        "timecode": "LTC",
+        "failover": "srv_b"
+      },
+      {
+        "id": "srv_b",
+        "deviceId": "dev_srvB",
+        "platform": "disguise",
+        "role": "backup",
+        "outputs": [
+          {
+            "portId": "p_srvB_out1",
+            "resolution": "3840x2160",
+            "refresh": 59.94,
+            "feedsWallId": "wall_us"
+          }
+        ],
+        "inputs": [],
+        "timecode": "LTC",
+        "failover": null
+      }
+    ],
+    "content": {
+      "canvasRef": "led.canvas",
+      "contentSpecs": [
+        {
+          "wallId": "wall_us",
+          "w_px": 2400,
+          "h_px": 672,
+          "codec": "HAP",
+          "fps": 59.94
+        }
+      ]
+    }
+  },
+  "binder": {
+    "sections": [],
+    "annotations": [],
+    "checks": [],
+    "schedule": [],
+    "contacts": []
+  },
+  "derived": {}
+}
