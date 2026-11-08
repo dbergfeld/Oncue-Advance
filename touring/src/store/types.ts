@@ -106,6 +106,8 @@ export interface PhysPath {
 // ---------- module slices ----------
 export interface Circuit { id: string; amps: number; tiles: [number, number][] }
 export interface DataRun { portId: string; tileChain: [number, number][]; redundant: boolean }
+/** Pixel & Patch: an XD box dropped on a wall's tile map. `letter` names its ports (A → A1…A10); x/y are in tile units from the map's top-left. */
+export interface PatchBox { deviceId: string; letter: string; x: number; y: number }
 export interface Wall {
   id: string; name: string; tileModel: string; templateId?: string;
   cols: number; rows: number; tileW_mm: number; tileH_mm: number; pitch_mm: number; trimHeight_ft: number;
@@ -114,6 +116,7 @@ export interface Wall {
   processorIds: string[];
   dataRuns: DataRun[];
   power: { phase: "3Ø" | "1Ø"; circuits: Circuit[]; distroId: string | null };
+  patchBoxes?: PatchBox[];
 }
 
 export interface SignalNode { id: string; deviceId: string; role: "source" | "switcher" | "router" | "processor" | "record" | "monitor" | "sink"; x: number; y: number }

@@ -1,7 +1,7 @@
 // LED Map & Power module (`led`). Owns /led, devices of class tile/processor/distro/ledPdu and the
 // etherCon / fiberLED / tilePower cables. Pure: every write is returned as Patch[] for the caller to apply as 'led'.
 import type {
-  Cable, CheckDraft, Circuit, DataRun, Derived, Device, ModuleContract, Patch, SeedContext, ShowRecord, ValidateContext, Wall,
+  Cable, CheckDraft, Circuit, DataRun, Derived, Device, ModuleContract, Patch, PatchBox, SeedContext, ShowRecord, ValidateContext, Wall,
 } from "../store/types";
 import { instantiate, library, nextLabel, type NewId } from "../library/library";
 import {
@@ -369,6 +369,206 @@ export function sizeWall(r: ShowRecord, wallId: string, o: SizeWallOpts): Patch[
     set("power/circuits", w.power.circuits.map((c) => ({ ...c, tiles: c.tiles.filter((t) => inBounds(nw, t)) })));
   }
   return out;
+}
+
+// ---------------- pixel & patch (manual tile mapping) ----------------
+/** Letters an XD box can carry on a wall, in drop order. A, B, C, D fill one SX40 (four 10G outs); E onward pair a second SX40. */
+export const PATCH_LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+
+export function patchBoxes(w: Wall): PatchBox[] {
+  return w.patchBoxes ?? [];
+}
+
+/** Next free box letter on a wall: the first of A, B, C, D, … no box carries yet. */
+export function nextPatchLetter(w: Wall): string {
+  const used = new Set(patchBoxes(w).map((b) => b.letter));
+  return PATCH_LETTERS.find((l) => !used.has(l)) ?? `X${patchBoxes(w).length + 1}`;
+}
+
+/** Tile-facing 1G outputs of an XD, in port order (1G OUT 1 … 10). */
+export function xdOutPorts(d: Device): Device["ports"] {
+  return d.ports.filter((p) => p.type === "etherCon" && p.dir === "out");
+}
+
+/** "A3" for the third 1G output of box A; falls back to "<device> <port>" for ports that are not on a patch box. */
+export function portPatchLabel(r: ShowRecord, w: Wall, portId: string): string {
+  const o = portOwner(r, portId);
+  if (!o) return "unassigned";
+  const box = patchBoxes(w).find((b) => b.deviceId === o.device.id);
+  if (box) {
+    const i = xdOutPorts(o.device).findIndex((p) => p.id === portId);
+    if (i >= 0) return `${box.letter}${i + 1}`;
+  }
+  return `${o.device.label} ${o.port.name}`;
+}
+
+/** The ports of every XD box on a wall as "A1" … "D10" with the device that holds them. */
+export function patchPorts(r: ShowRecord, w: Wall): { box: PatchBox; device: Device; port: Device["ports"][number]; label: string }[] {
+  const out: { box: PatchBox; device: Device; port: Device["ports"][number]; label: string }[] = [];
+  for (const box of patchBoxes(w)) {
+    const d = deviceById(r, box.deviceId);
+    if (!d) continue;
+    xdOutPorts(d).forEach((port, i) => out.push({ box, device: d, port, label: `${box.letter}${i + 1}` }));
+  }
+  return out;
+}
+
+function busyPorts(r: ShowRecord, extraCables: Cable[] = []): Set<string> {
+  return new Set([...r.cables, ...extraCables].flatMap((c) => [c.fromPort, c.toPort]).filter(Boolean) as string[]);
+}
+
+function uniqueDeviceLabel(r: ShowRecord, want: string, taken: Set<string>): string {
+  const used = new Set([...r.devices.map((d) => d.label.toLowerCase()), ...[...taken].map((l) => l.toLowerCase())]);
+  if (!used.has(want.toLowerCase())) return want;
+  for (let i = 2; ; i++) if (!used.has(`${want}-${i}`.toLowerCase())) return `${want}-${i}`;
+}
+
+export interface DropXdOpts { letter?: string; x?: number; y?: number }
+
+/**
+ * Drops an XD box on a wall's tile map: adds a Brompton Tessera XD labelled `XD-<letter>`, appends it to the wall's processors,
+ * records the box at (x, y) tile units, and lands its 10G IN 1 on a free SX40 10G OUT with a fiberLED jumper — adding an SX40
+ * (`PROC-n`) when no output is free. Every box therefore arrives with its upstream connection point made.
+ */
+export function dropXd(r: ShowRecord, wallId: string, newId: NewId, opts: DropXdOpts = {}): Patch[] {
+  const w = findWall(r, wallId);
+  const letter = opts.letter ?? nextPatchLetter(w);
+  if (patchBoxes(w).some((b) => b.letter === letter)) throw new Error(`${w.name} already has XD box ${letter}`);
+  const patches: Patch[] = [];
+  const taken = new Set<string>();
+  const added: Device[] = [];
+  const add = (tplId: string, label: string) => {
+    const d = instantiate(library.get(tplId)!, label, newId);
+    taken.add(label);
+    added.push(d);
+    patches.push({ op: "add", path: "/devices/-", value: d });
+    return d;
+  };
+  const xd = add("tpl_brompton_xd", uniqueDeviceLabel(r, `XD-${letter}`, taken));
+  // Upstream: a free SX40 10G OUT, preferring the wall's own processors, else a new SX40.
+  const busy = busyPorts(r);
+  const sxs = [...w.processorIds.map((id) => deviceById(r, id)).filter((d): d is Device => !!d && isSX40(d)), ...r.devices.filter((d) => isSX40(d) && !w.processorIds.includes(d.id))];
+  let out = sxs.flatMap((d) => d.ports.filter((p) => p.type === "fiberLED" && p.dir === "out" && !busy.has(p.id)).map((p) => ({ d, p })))[0];
+  if (!out) {
+    const sx = add("tpl_brompton_sx40", nextLabel([...r.devices.map((d) => d.label), ...taken], "PROC"));
+    const p = sx.ports.find((q) => q.type === "fiberLED" && q.dir === "out")!;
+    out = { d: sx, p };
+  }
+  const inp = xd.ports.find((p) => p.type === "fiberLED" && p.dir === "in");
+  if (inp) {
+    const label = nextLabel(r.cables.map((c) => c.label), "LED", 1, { pad: 3 });
+    const cable: Cable = { id: newId("cab"), type: "fiberLED", length_ft: 10, fromPort: out.p.id, toPort: inp.id, label, redundancyGroup: null };
+    patches.push({ op: "add", path: "/cables/-", value: cable });
+  }
+  const procIds = [...w.processorIds, ...added.map((d) => d.id).filter((id) => !w.processorIds.includes(id))];
+  patches.push({ op: "replace", path: `${wallPath(w)}/processorIds`, value: procIds });
+  const n = patchBoxes(w).length;
+  const box: PatchBox = { deviceId: xd.id, letter, x: Math.max(0, opts.x ?? 0), y: Math.max(0, opts.y ?? w.rows + 0.5 + n * 1.6) };
+  if (w.patchBoxes) patches.push({ op: "add", path: `${wallPath(w)}/patchBoxes/-`, value: box });
+  else patches.push({ op: "add", path: `${wallPath(w)}/patchBoxes`, value: [box] });
+  return patches;
+}
+
+/** Moves an XD box on the map (tile units, clamped to ≥ 0). */
+export function moveXd(r: ShowRecord, wallId: string, deviceId: string, at: { x: number; y: number }): Patch[] {
+  const w = findWall(r, wallId);
+  const i = patchBoxes(w).findIndex((b) => b.deviceId === deviceId);
+  if (i < 0) return [];
+  const b = patchBoxes(w)[i];
+  const x = Math.max(0, Math.round(at.x * 100) / 100), y = Math.max(0, Math.round(at.y * 100) / 100);
+  if (x === b.x && y === b.y) return [];
+  return [{ op: "replace", path: `${wallPath(w)}/patchBoxes/${i}`, value: { ...b, x, y } }];
+}
+
+/** Removes an XD box: its data runs, its place in the wall's processors, its jumper cables and the device itself. */
+export function removeXd(r: ShowRecord, wallId: string, deviceId: string): Patch[] {
+  const w = findWall(r, wallId);
+  const d = deviceById(r, deviceId);
+  if (!d || !patchBoxes(w).some((b) => b.deviceId === deviceId)) return [];
+  const ports = new Set(d.ports.map((p) => p.id));
+  const out: Patch[] = [
+    { op: "replace", path: `${wallPath(w)}/dataRuns`, value: w.dataRuns.filter((run) => !ports.has(run.portId)) },
+    { op: "replace", path: `${wallPath(w)}/processorIds`, value: w.processorIds.filter((id) => id !== deviceId) },
+    { op: "replace", path: `${wallPath(w)}/patchBoxes`, value: patchBoxes(w).filter((b) => b.deviceId !== deviceId) },
+  ];
+  for (const c of r.cables) if ((c.fromPort && ports.has(c.fromPort)) || (c.toPort && ports.has(c.toPort))) out.push({ op: "remove", path: `/cables/${c.id}` });
+  out.push({ op: "remove", path: `/devices/${deviceId}` });
+  return out;
+}
+
+export type PaintMode = "add" | "remove" | "set";
+
+/**
+ * Paints tiles onto a port's data run. `add` appends the stroke to the chain (in stroke order), `remove` takes the tiles out,
+ * `set` replaces the chain. A tile belongs to one primary run (and one backup run) at a time, so painting it moves it off any
+ * other run of the same kind. A port whose chain empties loses its run.
+ */
+export function paintTiles(r: ShowRecord, wallId: string, portId: string, tiles: [number, number][], mode: PaintMode = "add", opts: { redundant?: boolean } = {}): Patch[] {
+  const w = findWall(r, wallId);
+  if (!portOwner(r, portId)) throw new Error(`no port ${portId}`);
+  const redundant = opts.redundant ?? false;
+  const stroke = tiles.filter((t) => inBounds(w, t));
+  const keys = new Set(stroke.map(tkey));
+  const idx = w.dataRuns.findIndex((d) => d.portId === portId && d.redundant === redundant);
+  const cur = idx >= 0 ? w.dataRuns[idx].tileChain : [];
+  let chain: [number, number][];
+  if (mode === "remove") chain = cur.filter((t) => !keys.has(tkey(t)));
+  else if (mode === "set") chain = dedupe(stroke);
+  else chain = dedupe([...cur, ...stroke]);
+  const mine = new Set(chain.map(tkey));
+  const runs: DataRun[] = w.dataRuns
+    .map((d, i) => (i === idx ? null : d.redundant === redundant ? { ...d, tileChain: d.tileChain.filter((t) => !mine.has(tkey(t))) } : d))
+    .filter((d): d is DataRun => !!d && (d.tileChain.length > 0 || d.redundant !== redundant));
+  if (chain.length) {
+    const run: DataRun = { portId, tileChain: chain, redundant };
+    if (idx >= 0) runs.splice(Math.min(idx, runs.length), 0, run); else runs.push(run);
+  }
+  const same = runs.length === w.dataRuns.length && runs.every((d, i) => d.portId === w.dataRuns[i].portId && d.redundant === w.dataRuns[i].redundant && d.tileChain.length === w.dataRuns[i].tileChain.length && d.tileChain.every((t, j) => tkey(t) === tkey(w.dataRuns[i].tileChain[j])));
+  return same ? [] : [{ op: "replace", path: `${wallPath(w)}/dataRuns`, value: runs }];
+}
+
+function dedupe(ts: [number, number][]): [number, number][] {
+  const seen = new Set<string>();
+  const out: [number, number][] = [];
+  for (const t of ts) { const k = tkey(t); if (!seen.has(k)) { seen.add(k); out.push(t); } }
+  return out;
+}
+
+/** Drops every run (primary and backup) on a port. */
+export function clearPort(r: ShowRecord, wallId: string, portId: string): Patch[] {
+  const w = findWall(r, wallId);
+  const runs = w.dataRuns.filter((d) => d.portId !== portId);
+  return runs.length === w.dataRuns.length ? [] : [{ op: "replace", path: `${wallPath(w)}/dataRuns`, value: runs }];
+}
+
+/** Data flow a wall's runs imply: SX40 → XD jumpers and XD port → tile counts, for the Pixel & Patch flow strip and Signal Flow legs. */
+export interface LedLeg { fromDeviceId: string; toDeviceId: string | null; toWallId: string | null; label: string; short: string; ports: string[]; tiles: number; px: number; cableId?: string }
+export function ledLegs(r: ShowRecord, w: Wall): LedLeg[] {
+  const g = wallGeometry(r, w);
+  const tilePx = g.tile.px_w * g.tile.px_h;
+  const legs: LedLeg[] = [];
+  const byDevice = new Map<string, { ports: string[]; tiles: number }>();
+  for (const run of w.dataRuns) {
+    if (run.redundant) continue;
+    const o = portOwner(r, run.portId);
+    if (!o) continue;
+    const e = byDevice.get(o.device.id) ?? { ports: [], tiles: 0 };
+    e.ports.push(portPatchLabel(r, w, run.portId));
+    e.tiles += run.tileChain.filter((t) => inBounds(w, t)).length;
+    byDevice.set(o.device.id, e);
+  }
+  for (const [devId, e] of byDevice) {
+    const label = `${e.ports.length} run${e.ports.length === 1 ? "" : "s"} · ${fmt(e.tiles)} tiles`;
+    legs.push({ fromDeviceId: devId, toDeviceId: null, toWallId: w.id, label, short: `${e.ports.join(" ")} · ${fmt(e.tiles)} tiles`, ports: e.ports, tiles: e.tiles, px: e.tiles * tilePx });
+  }
+  const procs = new Set(w.processorIds);
+  for (const c of r.cables) {
+    if (c.type !== "fiberLED" || !c.fromPort || !c.toPort) continue;
+    const a = portOwner(r, c.fromPort), b = portOwner(r, c.toPort);
+    if (!a || !b || (!procs.has(a.device.id) && !procs.has(b.device.id))) continue;
+    legs.push({ fromDeviceId: a.device.id, toDeviceId: b.device.id, toWallId: null, label: `${c.label} · ${a.port.name} → ${b.port.name}`, short: c.label, ports: [a.port.name], tiles: 0, px: 0, cableId: c.id });
+  }
+  return legs;
 }
 
 // ---------------- validate ----------------

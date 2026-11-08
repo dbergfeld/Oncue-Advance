@@ -5,6 +5,7 @@ The shared-ShowRecord workspace described in the **On Cue: Touring — Shared Sh
 | Module | Owns | View |
 | --- | --- | --- |
 | LED Map & Power (`led`) | `/led`, tiles / processors / distros / LED PDUs, LED data + tile power cables | wall sizing, tile map (data runs / circuits), canvas |
+| Pixel & Patch (`led`, same slice) | `/led/walls[].patchBoxes`, `dataRuns` painted by hand | the LED section as a work surface: drop XD boxes (A, B, C, D … ports A1–A10) on the tile map, pick a port, paint tiles onto it; each box lands on an SX40 10G out; data-flow strip |
 | Show Signal Flow (`signal`) | `/signal`, `/physical`, cameras / CCUs / switchers / routers / converters / recorders / monitors / fibre / stage-box panels, every non-LED cable | port-graph canvas with Logical / Physical / Build layers, connect, redundancy groups, trunk plan |
 | Rack Build (`rack`) | `/racks`, PDUs / UPS / shelves / rack panels, `rackId` + `ru` + `positionId` on any device | rack elevations, auto-place |
 | Media Servers (`servers`) | `/servers`, servers / KVM / capture / sync | outputs to walls, failover, content specs |
@@ -20,7 +21,7 @@ React 18 + TypeScript + Vite + Tailwind; no server. Persistence is IndexedDB (`o
 src/store/        the contract: types, ids, JSON-pointer patch, ownership gates, refs + cascade,
                   schema, lifecycle (issue / revise / lock / archive / copy), tasks, readiness, persistence
 src/library/      device library (templates from the Device library tab) + instantiate()
-src/modules/      led.ts, rack.ts, servers.ts, binder.ts, signal/ (port rules, graph, physical layer, helpers),
+src/modules/      led.ts (incl. Pixel & Patch: dropXd / paintTiles / ledLegs), rack.ts, servers.ts, binder.ts, signal/ (port rules, graph, physical layer, helpers),
                   show-book/ (setlist, cues, camera notes, run log, lifecycle gates)
 src/setup/        six-step new-show wizard, example + venue memory, RentalWorks CSV import, Airtable payload
 src/engine.ts     wires modules + store-level derivations into the Workspace
@@ -53,6 +54,7 @@ Implementation checklist from the spec, in order:
 | — | store/tasks.ts (Task handoff tab), signal/physical.ts (Cable & panels tab) | done |
 | 9 | `fixtures/example-arena.json` + acceptance test of the expected checks | done |
 | 10–14 | LED Map & Power, Signal Flow, Rack Build, Media Servers, Show Binder on `ModuleContract` | done |
+| — | Pixel & Patch: manual tile mapping on the map (XD boxes A–D with ports A1–A10 … D10, paint-to-port data runs, backup layer, derived data flow; Signal Flow draws the processor → wall legs from `dataRuns`) | done |
 | — | Show Book (Cues & camera notes tab): `/show` slice, SHW-001..005, locked-show gates, `fixtures/setlist-arena.json`, ⚑ mobile-note test | done; live sync between the director's and operators' devices needs a shared backend, which this local-first build does not have |
 | 15 | Shell: show picker, new from blank / template / example / copy, DRAFT / REV badge | done |
 | 16 | Mobile v.1 | writer id `mobile` and its gates exist in the store; no mobile client yet |
