@@ -1,5 +1,6 @@
 import { useMemo, useRef, useState } from "react";
 import { LIBRARY } from "../../library/library";
+import { ledLegs, type LedLeg } from "../../modules/led";
 import { addRedundancyGroup, addSignalDevice, autoPatchProgram, connect, disconnect } from "../../modules/signal/helpers";
 import { proposeTrunkPlan, seedPhysical } from "../../modules/signal/physical";
 import { newId } from "../../store/ids";
@@ -10,6 +11,7 @@ import { useRecord, useWriter, isFrozen } from "../state";
 type Layer = "logical" | "physical" | "build";
 const COL: Record<string, number> = { camera: 0, ccu: 1, server: 2, switcher: 2, router: 3, converter: 3, recorder: 4, monitor: 4, processor: 5, patchPanel: 3, fiber: 3 };
 const NODE_W = 132, NODE_H = 40;
+const WALL_COL = 6;
 
 function portOwner(r: ShowRecord) {
   const m = new Map<string, { dev: Device; name: string; type: string }>();
@@ -27,10 +29,13 @@ export function SignalView() {
   const checks = r.binder.checks.filter((c) => !c.resolved && c.module === "signal");
   const flagged = new Set(checks.flatMap((c) => [c.target, ...(c.involved ?? [])]));
 
-  // Devices drawn: every node plus any device that carries a signal cable.
+  // LED legs are read from led.walls[].dataRuns and the fiberLED jumpers (Pixel & Patch): processor → wall, never re-entered here.
+  const legs = useMemo(() => r.led.walls.flatMap((w) => ledLegs(r, w).map((l) => ({ ...l, wall: w }))), [r]);
+  // Devices drawn: every node plus any device that carries a signal cable, plus processors that drive a wall.
   const drawn = useMemo(() => {
     const ids = new Set(r.signal.nodes.map((n) => n.deviceId));
     for (const c of r.cables) for (const p of [c.fromPort, c.toPort]) { const o = p && ports.get(p); if (o && !["etherCon", "fiberLED", "tilePower"].includes(c.type)) ids.add(o.dev.id); }
+    for (const l of legs) { ids.add(l.fromDeviceId); if (l.toDeviceId) ids.add(l.toDeviceId); }
     const counters: Record<number, number> = {};
     return [...ids].map((id) => {
       const d = r.devices.find((x) => x.id === id)!;
@@ -40,10 +45,13 @@ export function SignalView() {
       const row = (counters[col] = (counters[col] ?? 0) + 1) - 1;
       return { d, x: n?.x ?? 20 + col * 170, y: n?.y ?? 20 + row * 70, nodeId: n?.id };
     }).filter(Boolean) as { d: Device; x: number; y: number; nodeId?: string }[];
-  }, [r, ports]);
+  }, [r, ports, legs]);
   const pos = new Map(drawn.map((n) => [n.d.id, n]));
-  const W = Math.max(900, ...drawn.map((n) => n.x + NODE_W + 20));
-  const H = Math.max(360, ...drawn.map((n) => n.y + NODE_H + 30));
+  // Walls with data runs sit in their own column to the right of the processors.
+  const wallNodes = r.led.walls.filter((w) => legs.some((l) => l.toWallId === w.id)).map((w, i) => ({ w, x: 20 + WALL_COL * 170, y: 20 + i * 70 }));
+  const wallPos = new Map(wallNodes.map((n) => [n.w.id, n]));
+  const W = Math.max(900, ...drawn.map((n) => n.x + NODE_W + 20), ...wallNodes.map((n) => n.x + NODE_W + 20));
+  const H = Math.max(360, ...drawn.map((n) => n.y + NODE_H + 30), ...wallNodes.map((n) => n.y + NODE_H + 30));
 
   const svgRef = useRef<SVGSVGElement>(null);
   const [drag, setDrag] = useState<{ id: string; dx: number; dy: number; x: number; y: number } | null>(null);
@@ -66,7 +74,7 @@ export function SignalView() {
       <div className="flex flex-wrap gap-2 items-center" role="tablist">
         <span className="label">Layer</span>
         {(["logical", "physical", "build"] as Layer[]).map((l) => <button key={l} role="tab" aria-selected={layer === l} className={`btn ${layer === l ? "border-accent text-accent" : ""}`} onClick={() => setLayer(l)}>{l}</button>)}
-        <span className="text-xs text-dim">Drag devices to arrange. Click a line to inspect it{r.signal.links.length > 10 ? " and see its label" : ""}.</span>
+        <span className="text-xs text-dim">Drag devices to arrange. Click a line to inspect it{r.signal.links.length > 10 ? " and see its label" : ""}. Dotted legs are LED data runs mapped in Pixel &amp; Patch.</span>
       </div>
       <div className="grid gap-4 xl:grid-cols-[1fr_22rem]">
         <div className="scroll-x border border-line rounded-sm bg-panel min-w-0">
@@ -83,6 +91,20 @@ export function SignalView() {
                 setDrag(null);
               }}>
               <defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="rgb(var(--dim))" /></marker></defs>
+              {legs.map((l) => {
+                const pa = drag?.id === l.fromDeviceId ? drag : pos.get(l.fromDeviceId);
+                const pb = l.toDeviceId ? (drag?.id === l.toDeviceId ? drag : pos.get(l.toDeviceId)) : l.toWallId ? wallPos.get(l.toWallId) : undefined;
+                if (!pa || !pb) return null;
+                const x1 = pa.x + NODE_W, y1 = pa.y + NODE_H / 2, x2 = pb.x, y2 = pb.y + NODE_H / 2, mx = (x1 + x2) / 2;
+                const txt = l.short;
+                return (
+                  <g key={`led-${l.cableId ?? `${l.fromDeviceId}-${l.toWallId}`}`}>
+                    <title>{legTitle(l, r)}</title>
+                    <path d={`M${x1},${y1} C${mx},${y1} ${mx},${y2} ${x2},${y2}`} fill="none" stroke="rgb(var(--accent))" strokeWidth={1.8} strokeDasharray="2 3" markerEnd="url(#arr)" />
+                    {(legs.length <= 12) && <text x={mx} y={(y1 + y2) / 2 - 4} fontSize={10} textAnchor="middle" fill="rgb(var(--ink))" fontFamily="IBM Plex Mono, monospace" paintOrder="stroke" stroke="rgb(var(--panel))" strokeWidth={3}>{txt}</text>}
+                  </g>
+                );
+              })}
               {r.signal.links.map((l) => {
                 const c = r.cables.find((x) => x.id === l.cableId);
                 const a = c?.fromPort && ports.get(c.fromPort), b = c?.toPort && ports.get(c.toPort);
@@ -103,6 +125,13 @@ export function SignalView() {
                   </g>
                 );
               })}
+              {wallNodes.map((n) => (
+                <g key={n.w.id} transform={`translate(${n.x},${n.y})`}>
+                  <rect width={NODE_W} height={NODE_H} rx={3} fill="rgb(var(--raised))" stroke="rgb(var(--accent))" strokeDasharray="4 3" />
+                  <text x={10} y={16} fontSize={12} fontWeight={600} fill="rgb(var(--ink))" fontFamily="IBM Plex Sans, sans-serif">{n.w.name}</text>
+                  <text x={10} y={31} fontSize={9.5} fill="rgb(var(--dim))" fontFamily="IBM Plex Mono, monospace">LED wall · {n.w.cols}×{n.w.rows}</text>
+                </g>
+              ))}
               {drawn.map((n) => {
                 const p = drag?.id === n.d.id ? drag : n;
                 const bad = flagged.has(n.d.id);
@@ -143,6 +172,11 @@ export function SignalView() {
       <Panel title="Signal checks">{checks.length === 0 ? <Empty>No open signal checks.</Empty> : <div className="grid gap-2 lg:grid-cols-2">{checks.map((c) => <CheckCard key={c.id} c={c} />)}</div>}</Panel>
     </div>
   );
+}
+
+function legTitle(l: LedLeg & { wall: { name: string } }, r: ShowRecord): string {
+  const name = (id: string | null) => r.devices.find((d) => d.id === id)?.label ?? "";
+  return l.toWallId ? `${name(l.fromDeviceId)} → ${l.wall.name}: ${l.label} on ${l.ports.join(", ")} (${l.px.toLocaleString("en-US")} px). Mapped in Pixel & Patch.` : `${name(l.fromDeviceId)} → ${name(l.toDeviceId)}: ${l.label}`;
 }
 
 function ConnectForm({ r, frozen }: { r: ShowRecord; frozen: boolean }) {

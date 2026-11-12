@@ -4,13 +4,14 @@ import { addWall, autoCircuits, autoProcessors, autoSplitRuns, setCanvas, sizeWa
 import { newId } from "../../store/ids";
 import type { ShowRecord, Wall } from "../../store/types";
 import { CheckCard, Edit, Empty, fmt, PageHead, Panel, Stat } from "../kit";
-import { useRecord, useWriter, isFrozen } from "../state";
+import { useApp, useRecord, useWriter, isFrozen } from "../state";
 
-const RUN_COLORS = ["#e08a1e", "#2f8fcf", "#3aa65a", "#c2416b", "#8b6fd6", "#c9a227", "#1fa3a3", "#d0603a"];
+export const RUN_COLORS = ["#e08a1e", "#2f8fcf", "#3aa65a", "#c2416b", "#8b6fd6", "#c9a227", "#1fa3a3", "#d0603a"];
 
 export function LedView() {
   const r = useRecord()!;
   const led = useWriter("led");
+  const { go } = useApp();
   const [sel, setSel] = useState<string | null>(r.led.walls[0]?.id ?? null);
   const [layer, setLayer] = useState<"data" | "power">("data");
   const frozen = isFrozen(r);
@@ -25,6 +26,7 @@ export function LedView() {
         actions={<>
           <button className="btn" disabled={frozen} onClick={() => led((rec) => addWall(rec, { name: nextWallName(rec), templateId: "tpl_roe_cb5", cols: 10, rows: 6, position: "US", rigging: "flown", trimHeight_ft: 30 }, newId), "led: add wall")}>Add wall</button>
           <button className="btn" disabled={frozen || !r.led.walls.length} onClick={() => led((rec) => setCanvas(rec), "led: lay out canvas")}>Lay out canvas</button>
+          <button className="btn" disabled={!r.led.walls.length} onClick={() => go("pixelpatch")} title="Map tiles to XD ports by hand on the tile map">Pixel &amp; Patch</button>
         </>} />
       {r.led.walls.length === 0 ? <Empty>No LED walls on this show. Add a wall, or run setup step 3.</Empty> : (
         <div className="grid gap-4 xl:grid-cols-[18rem_1fr]">
@@ -69,7 +71,7 @@ export function LedView() {
   );
 }
 
-function nextWallName(r: ShowRecord): string {
+export function nextWallName(r: ShowRecord): string {
   const names = ["US Wall", "IMAG L", "IMAG R", "SL Wall", "SR Wall", "DS Wall"];
   return names.find((n) => !r.led.walls.some((w) => w.name === n)) ?? `Wall ${r.led.walls.length + 1}`;
 }
@@ -152,7 +154,7 @@ function TileMap({ wall, layer, r }: { wall: Wall; layer: "data" | "power"; r: S
 }
 
 /** Per-song wall state from the Show Book, so a wall sent to black is readable here too. */
-function WallStates({ r, wallId }: { r: ShowRecord; wallId: string }) {
+export function WallStates({ r, wallId }: { r: ShowRecord; wallId: string }) {
   const sl = r.show.setlists.find((x) => x.id === r.show.activeSetlistId);
   const rows = (sl?.songs ?? []).map((s) => ({ s, w: s.wallState?.find((x) => x.wallId === wallId) })).filter((x) => x.w).sort((a, b) => a.s.order - b.s.order);
   if (!rows.length) return null;

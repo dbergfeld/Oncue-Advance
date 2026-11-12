@@ -2,13 +2,14 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState, u
 import type { ShowAPI, Workspace } from "../store/store";
 import type { Patch, Result, ShowRecord, WriterId } from "../store/types";
 
-export type View = "shows" | "overview" | "advance" | "crew" | "led" | "signal" | "rack" | "servers" | "binder" | "showbook" | "tasks" | "library" | "changelog";
+export type View = "shows" | "overview" | "advance" | "crew" | "led" | "pixelpatch" | "signal" | "rack" | "servers" | "binder" | "showbook" | "tasks" | "library" | "changelog";
 export const VIEWS: { id: View; label: string; needsShow: boolean }[] = [
   { id: "shows", label: "Shows", needsShow: false },
   { id: "overview", label: "Overview", needsShow: true },
   { id: "advance", label: "Advance", needsShow: true },
   { id: "crew", label: "Crew & schedule", needsShow: true },
   { id: "led", label: "LED Map & Power", needsShow: true },
+  { id: "pixelpatch", label: "Pixel & Patch", needsShow: true },
   { id: "signal", label: "Signal Flow", needsShow: true },
   { id: "rack", label: "Rack Build", needsShow: true },
   { id: "servers", label: "Media Servers", needsShow: true },

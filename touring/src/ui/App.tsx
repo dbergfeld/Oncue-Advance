@@ -6,6 +6,7 @@ import { OverviewView } from "./views/Overview";
 import { AdvanceView } from "./views/Advance";
 import { CrewView } from "./views/Crew";
 import { LedView } from "./views/Led";
+import { PixelPatchView } from "./views/PixelPatch";
 import { SignalView } from "./views/Signal";
 import { RackView } from "./views/Rack";
 import { ServersView } from "./views/Servers";
@@ -80,6 +81,7 @@ function render(view: string) {
     case "advance": return <AdvanceView />;
     case "crew": return <CrewView />;
     case "led": return <LedView />;
+    case "pixelpatch": return <PixelPatchView />;
     case "signal": return <SignalView />;
     case "rack": return <RackView />;
     case "servers": return <ServersView />;
